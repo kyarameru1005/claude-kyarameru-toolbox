@@ -11,7 +11,11 @@
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
-      "Bash(python3 -m pytest:*)"
+      "Bash(git switch:*)",
+      "Bash(git branch:*)",
+      "Bash(python3 -m pytest:*)",
+      "Bash(python3 scripts/validate-toolbox.py:*)",
+      "Bash(python3 scripts/toolbox-manager.py:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",
@@ -28,6 +32,10 @@
           {
             "type": "command",
             "command": "\"$HOME/.claude/hooks/run-pytest.sh\""
+          },
+          {
+            "type": "command",
+            "command": "\"$HOME/.claude/hooks/run-validate-toolbox.sh\""
           }
         ]
       }
