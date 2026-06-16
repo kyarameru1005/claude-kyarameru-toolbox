@@ -18,6 +18,7 @@ agent と skill のどちらを使うかの判断は、ルート `README.md` の
 | `athena` | 実装後レビュー。正しさ・保守性 | read-only | opus |
 | `themis` | テスト・評価。合否判断 | read-only | sonnet |
 | `ares` | セキュリティ・リスク検出 | read-only | opus |
+| `khaos` | カオスエンジニアリング。耐障害性の実験設計 | read-only | opus |
 | `apollo` | ドキュメント作成・更新 | write | sonnet |
 | `chronos` | ログ・振り返り・再開メモ | read-only | haiku |
 
@@ -34,5 +35,6 @@ agent と skill のどちらを使うかの判断は、ルート `README.md` の
 - 関連ファイルや影響範囲が不明なら、先に `hermes` を使う。
 - 設計判断が必要なら、実装前に `daedalus` を使う。
 - UI/見た目の判断が必要なら、実装前に `aphrodite` を使う。
+- 耐障害性を検証したいなら、実験設計に `khaos` を使う（実際の障害注入は行わない）。
 - 実装後は `athena` や `themis` で確認する。
 - 並列化は独立した作業だけに限定し、同じファイルを複数エージェントで同時に触らせない。

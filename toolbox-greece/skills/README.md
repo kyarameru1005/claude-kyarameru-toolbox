@@ -29,6 +29,7 @@
 - `forge-implement`: 実装。最小差分で安全に変更する。
 - `aegis-review`: レビュー。バグ・回帰・危険な仮定・保守性リスクを洗い出す。
 - `gauntlet-verify`: 検証。テスト・チェック結果を pass / fail / 未確認 で整理する。
+- `pandora-chaos`: 耐障害性検証。障害注入実験の定常状態・仮説・爆発半径・安全策を設計する。
 - `chronicle-docs`: 文書化。README・設計メモ・記録を再利用しやすくまとめる。
 - `argo-git-flow`: Git 作業フロー。ブランチ・コミット・プッシュ・PR を安全に進める。
 - `atlas-repository`: リポジトリ構造整理。配置・命名・境界を一定に保つ。
@@ -51,6 +52,7 @@
 - 実装: `forge-implement`
 - レビュー: `aegis-review`
 - 検証: `gauntlet-verify`
+- 耐障害性検証: `pandora-chaos`
 - 文書化: `chronicle-docs`
 - Git 作業: `argo-git-flow`
 - リポジトリ整理: `atlas-repository`
