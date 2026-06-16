@@ -13,6 +13,7 @@ agent と skill のどちらを使うかの判断は、ルート `README.md` の
 | `zeus` | Manager。判断と委譲、進行計画 | read-only | opus |
 | `hermes` | 実装前調査。構造・依存・影響範囲 | read-only | sonnet |
 | `daedalus` | 設計。責務分離・拡張性・選択肢比較 | read-only | opus |
+| `aphrodite` | UI/ビジュアル設計。レイアウト・視覚階層・状態 | read-only | opus |
 | `hephaestus` | 実装。最小差分での変更 | write | sonnet |
 | `athena` | 実装後レビュー。正しさ・保守性 | read-only | opus |
 | `themis` | テスト・評価。合否判断 | read-only | sonnet |
@@ -32,5 +33,6 @@ agent と skill のどちらを使うかの判断は、ルート `README.md` の
 - メインの Claude は全体判断と依頼の分配を担当する。
 - 関連ファイルや影響範囲が不明なら、先に `hermes` を使う。
 - 設計判断が必要なら、実装前に `daedalus` を使う。
+- UI/見た目の判断が必要なら、実装前に `aphrodite` を使う。
 - 実装後は `athena` や `themis` で確認する。
 - 並列化は独立した作業だけに限定し、同じファイルを複数エージェントで同時に触らせない。
