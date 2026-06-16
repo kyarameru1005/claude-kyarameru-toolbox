@@ -6,12 +6,43 @@
 `moira show` を読めば「目的・現在地・次の一手・決定ログ・タスク状態」から作業を再開できる。
 ディスク上の `.ai/moira.json` を唯一の真実とし、会話の揮発に依存しない。
 
-## ビルド
+## インストール（Rust 不要）
+
+ビルド済みバイナリを GitHub Releases から取得して PATH に入れる。Rust のインストールは不要。
+
+### macOS / Linux
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/kyarameru1005/claude-kyarameru-toolbox/main/apps/moira/install.sh | sh
+```
+
+- OS / arch を自動判定して該当バイナリを取得し、`/usr/local/bin/moira` に配置する。
+- 別の場所に入れたい場合: `curl -fsSL .../install.sh | BINDIR="$HOME/.local/bin" sh`
+- 特定バージョン: `curl -fsSL .../install.sh | MOIRA_VERSION=v0.1.0 sh`
+
+### Windows（PowerShell）
+
+```powershell
+irm https://raw.githubusercontent.com/kyarameru1005/claude-kyarameru-toolbox/main/apps/moira/install.ps1 | iex
+```
+
+- `%LOCALAPPDATA%\Programs\moira` に配置し、ユーザー環境変数 `Path` に追加する（新しいシェルで有効）。
+
+インストール後は任意のリポジトリで `moira` が使える（`.ai/moira.json` を cwd から上方探索するため）。
+
+対応プラットフォーム: macOS (Apple Silicon / Intel) ・ Linux x86_64 ・ Windows x86_64。
+
+## ビルド（開発者向け）
+
+ソースからビルドする場合（Rust 必要）:
 
 ```bash
 cd apps/moira
 cargo build --release   # 実行ファイル: target/release/moira
 cargo test
+
+# PATH に入れる
+cargo install --path .   # ~/.cargo/bin/moira
 ```
 
 ## 使い方
@@ -57,3 +88,18 @@ moira show --json                # 機械可読（エージェント連携用）
 
 - `status`: `todo` / `in_progress` / `done`
 - `id` は単調増加で採番し、削除後も再利用しない（参照が安定）。
+
+## リリース手順（メンテナ向け）
+
+バージョンタグを push すると、`.github/workflows/release.yml` が各プラットフォーム
+（macOS arm64 / Intel・Linux x86_64・Windows x86_64）のバイナリをビルドし、
+GitHub Releases にアップロードする。
+
+```bash
+# apps/moira/Cargo.toml の version を更新してから
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+公開後、上記のインストール用ワンライナーが最新リリースを取得できるようになる。
+

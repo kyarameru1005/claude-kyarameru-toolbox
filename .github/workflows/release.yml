@@ -1,0 +1,51 @@
+name: release
+
+# v* タグを push するとビルド済みバイナリを GitHub Releases に公開する。
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            target: aarch64-apple-darwin
+          - os: macos-13
+            target: x86_64-apple-darwin
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - name: Build
+        working-directory: apps/moira
+        run: cargo build --release --target ${{ matrix.target }}
+      - name: Package
+        shell: bash
+        working-directory: apps/moira
+        run: |
+          asset="moira-${{ matrix.target }}"
+          cd "target/${{ matrix.target }}/release"
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            7z a "$GITHUB_WORKSPACE/${asset}.zip" moira.exe >/dev/null
+            echo "ASSET=${asset}.zip" >> "$GITHUB_ENV"
+          else
+            tar -czf "$GITHUB_WORKSPACE/${asset}.tar.gz" moira
+            echo "ASSET=${asset}.tar.gz" >> "$GITHUB_ENV"
+          fi
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.ASSET }}
