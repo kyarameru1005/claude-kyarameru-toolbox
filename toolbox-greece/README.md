@@ -17,13 +17,42 @@
 - `skills/`: 作業パターン（`zeus-orchestrate`, `labyrinth-explore`, `oracle-design`, `forge-implement`, `aegis-review`, `gauntlet-verify`, `chronicle-docs`, `argo-git-flow`, `atlas-repository`）
 - `commands/`, `hooks/`, `plugins/`, `mcp/`, `memory/`: 必要になった時点で使う拡張用ディレクトリ
 
+## agents と skills の使い分け
+
+`agents/` と `skills/` は同じ役割を別の使い方で提供する並行ペアです。
+
+- **agents（神名）= 誰が担当するか。** 独立したコンテキストで調査や実装を任せ、メインの会話を汚さずに委譲したいときに使う。並列化や長い作業に向く。
+- **skills（道具・概念）= どの型で進めるか。** メインの会話の中で、決まった手順・出力形式に沿って自分で進めたいときに使う。委譲のオーバーヘッドがない。
+
+迷ったら「別コンテキストに任せたい → agent」「いまの会話で型に沿って進めたい → skill」で選びます。
+
+| 役割 | agent | skill |
+|------|-------|-------|
+| オーケストレーション | `zeus` | `zeus-orchestrate` |
+| 調査 | `hermes` | `labyrinth-explore` |
+| 設計 | `daedalus` | `oracle-design` |
+| 実装 | `hephaestus` | `forge-implement` |
+| レビュー | `athena` | `aegis-review` |
+| 検証 | `themis` | `gauntlet-verify` |
+| セキュリティ | `ares` | （`aegis-review` で兼ねる） |
+| 文書化 | `apollo` | `chronicle-docs` |
+| 振り返り・記録 | `chronos` | （`chronicle-docs` で兼ねる） |
+| Git 作業 | （メイン Claude が担当） | `argo-git-flow` |
+| 構造整理 | （メイン Claude が担当） | `atlas-repository` |
+
 ## 使い方
 
 リポジトリルートで次を実行します。
 
 ```bash
+# 1. 変更内容を確認（適用しない）
 python3 scripts/toolbox-manager.py apply --toolbox toolbox-greece --dry-run
+
+# 2. 既存ファイルを壊さない範囲で適用
 python3 scripts/toolbox-manager.py apply --toolbox toolbox-greece --safe
+
+# 3. 配布前に定義の妥当性を検証
+python3 scripts/validate-toolbox.py toolbox-greece
 ```
 
 詳しくはリポジトリルートの README を参照してください。
