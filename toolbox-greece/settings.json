@@ -19,10 +19,17 @@
     ],
     "deny": [
       "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
       "Bash(git reset --hard:*)",
+      "Bash(git clean:*)",
+      "Bash(git checkout --:*)",
       "Bash(rm -rf:*)"
     ],
-    "ask": []
+    "ask": [
+      "Bash(git rebase:*)",
+      "Bash(git branch -D:*)",
+      "Bash(git branch -d:*)"
+    ]
   },
   "hooks": {
     "PostToolUse": [
