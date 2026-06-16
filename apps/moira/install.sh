@@ -51,6 +51,12 @@ fi
 asset="moira-${target}.tar.gz"
 url="https://github.com/${REPO}/releases/download/${version}/${asset}"
 
+# 既存インストールの検出（再実行はアップデートになる）
+existing="$(moira --version 2>/dev/null | awk '{print $2}' || true)"
+if [ -n "$existing" ]; then
+    echo "moira-install: 既存 v${existing} を ${version} に更新します"
+fi
+
 # --- ダウンロード & 展開 ---
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
