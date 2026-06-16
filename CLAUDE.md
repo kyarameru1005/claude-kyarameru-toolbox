@@ -9,3 +9,10 @@
 - 秘密情報や実行時データは追加しない。
 - スクリプトを変更したら `python3 -m pytest -q` を実行する。
 - agent / skill の定義を変更したら `python3 scripts/validate-toolbox.py` を実行する。
+
+## スキル / エージェントの使用範囲
+
+- カレントディレクトリ以下（`toolbox/`, `toolbox-greece/` など）にあるスキルやエージェントの定義は、直接の利用対象にしない（編集・検証の対象としてのみ扱う）。
+- 実行時に利用してよいのは、次に登録されたスキル / エージェントのみとする。
+  - リポジトリルートの `.claude/`（`.claude/skills`, `.claude/agents`）
+  - ユーザーグローバルの `~/.claude/`（`~/.claude/skills`, `~/.claude/agents`）
