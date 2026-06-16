@@ -20,5 +20,18 @@
     ],
     "ask": []
   },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.claude/hooks/run-pytest.sh\""
+          }
+        ]
+      }
+    ]
+  },
   "env": {}
 }

@@ -46,6 +46,19 @@ def is_valid_model(value: str) -> bool:
     return value in ALLOWED_MODELS or value.startswith("claude-")
 
 
+def check_readme_lists(readme: Path, names: list[str], rel: str, errors: list[str]) -> None:
+    """各 name が README 内に記載されているか（一覧の更新漏れ）を確認する。"""
+    if not names:
+        return
+    if not readme.is_file():
+        errors.append(f"{rel}/{readme.name}: README が無いため一覧の整合を確認できない")
+        return
+    text = readme.read_text(encoding="utf-8")
+    for name in names:
+        if name not in text:
+            errors.append(f"{rel}/{readme.name}: '{name}' が一覧に記載されていない")
+
+
 def validate_agents(agents_dir: Path, rel: str, errors: list[str]) -> None:
     if not agents_dir.is_dir():
         return
@@ -72,6 +85,7 @@ def validate_agents(agents_dir: Path, rel: str, errors: list[str]) -> None:
                 errors.append(f"{where}: name '{name}' が {seen[name].name} と重複")
             else:
                 seen[name] = path
+    check_readme_lists(agents_dir / "README.md", list(seen), f"{rel}/agents", errors)
 
 
 def validate_skills(skills_dir: Path, rel: str, errors: list[str]) -> None:
@@ -101,6 +115,7 @@ def validate_skills(skills_dir: Path, rel: str, errors: list[str]) -> None:
                 errors.append(f"{where}: name '{name}' が重複")
             else:
                 seen[name] = manifest
+    check_readme_lists(skills_dir / "README.md", list(seen), f"{rel}/skills", errors)
 
 
 def validate_toolbox(toolbox: Path) -> list[str]:

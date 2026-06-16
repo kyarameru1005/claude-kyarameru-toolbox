@@ -50,12 +50,36 @@ def run_in(tmp_path, *args):
 def test_valid_toolbox_passes(tmp_path):
     tb = tmp_path / "toolbox-greece"
     write(tb / "agents" / "zeus.md", AGENT.format(name="zeus", model="opus"))
+    write(tb / "agents" / "README.md", "# agents\n\n- `zeus`\n")
     write(tb / "skills" / "forge-implement" / "SKILL.md", SKILL.format(name="forge-implement"))
+    write(tb / "skills" / "README.md", "# skills\n\n- `forge-implement`\n")
 
     result = run_in(tmp_path, "greece")
 
     assert result.returncode == 0, result.stderr
     assert "OK: toolbox-greece" in result.stdout
+
+
+def test_agent_missing_from_readme_fails(tmp_path):
+    tb = tmp_path / "toolbox-greece"
+    write(tb / "agents" / "zeus.md", AGENT.format(name="zeus", model="opus"))
+    write(tb / "agents" / "README.md", "# agents\n\nここに一覧。\n")
+
+    result = run_in(tmp_path, "greece")
+
+    assert result.returncode == 1
+    assert "一覧に記載されていない" in result.stderr
+
+
+def test_skill_missing_from_readme_fails(tmp_path):
+    tb = tmp_path / "toolbox-greece"
+    write(tb / "skills" / "forge-implement" / "SKILL.md", SKILL.format(name="forge-implement"))
+    write(tb / "skills" / "README.md", "# skills\n\n空。\n")
+
+    result = run_in(tmp_path, "greece")
+
+    assert result.returncode == 1
+    assert "一覧に記載されていない" in result.stderr
 
 
 def test_real_toolbox_greece_is_valid():
