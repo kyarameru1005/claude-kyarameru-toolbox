@@ -13,8 +13,8 @@
 
 - `CLAUDE.md`: 全体の行動原則
 - `settings.json`: Claude Code の基本設定（権限の allow / deny を含む）
-- `agents/`: 役割別サブエージェント定義（`zeus`, `hermes`, `daedalus`, `hephaestus`, `athena`, `themis`, `ares`, `apollo`, `chronos`）
-- `skills/`: 作業パターン（`zeus-orchestrate`, `labyrinth-explore`, `oracle-design`, `forge-implement`, `aegis-review`, `gauntlet-verify`, `chronicle-docs`, `argo-git-flow`, `atlas-repository`）
+- `agents/`: 役割別サブエージェント定義（`zeus`, `hermes`, `daedalus`, `aphrodite`, `hephaestus`, `athena`, `themis`, `ares`, `khaos`, `apollo`, `chronos`）
+- `skills/`: 作業パターン（`zeus-orchestrate`, `labyrinth-explore`, `oracle-design`, `muse-interface`, `muse-modern`, `muse-luxury`, `muse-minimal`, `muse-bold`, `muse-avantgarde`, `forge-implement`, `aegis-review`, `gauntlet-verify`, `pandora-chaos`, `chronicle-docs`, `argo-git-flow`, `atlas-repository`, `cerberus-permissions`）
 - `commands/`, `hooks/`, `plugins/`, `mcp/`, `memory/`: 必要になった時点で使う拡張用ディレクトリ
 
 ## agents と skills の使い分け
@@ -31,14 +31,17 @@
 | オーケストレーション | `zeus` | `zeus-orchestrate` |
 | 調査 | `hermes` | `labyrinth-explore` |
 | 設計 | `daedalus` | `oracle-design` |
+| UI/ビジュアル設計 | `aphrodite` | `muse-interface`（親）＋ 系統 `muse-*` |
 | 実装 | `hephaestus` | `forge-implement` |
 | レビュー | `athena` | `aegis-review` |
 | 検証 | `themis` | `gauntlet-verify` |
 | セキュリティ | `ares` | （`aegis-review` で兼ねる） |
+| 耐障害性検証（カオス） | `khaos` | `pandora-chaos` |
 | 文書化 | `apollo` | `chronicle-docs` |
 | 振り返り・記録 | `chronos` | （`chronicle-docs` で兼ねる） |
 | Git 作業 | （メイン Claude が担当） | `argo-git-flow` |
 | 構造整理 | （メイン Claude が担当） | `atlas-repository` |
+| 権限管理 | （メイン Claude が担当） | `cerberus-permissions` |
 
 ## 使い方
 
@@ -62,4 +65,5 @@ python3 scripts/validate-toolbox.py toolbox-greece
 - メインの Claude は全体判断と依頼の分配を担当する。
 - 役割分担を明示したいときは `zeus` または `/zeus-orchestrate` から始める。
 - 「調査 → 設計 → 実装 → レビュー → 検証 → 文書化」の順で必要な役割だけを選ぶ。
-- 並列化は独立した作業だけに限定し、同じファイルを複数エージェントで同時に触らせない。
+- 独立した作業（読み取り専用、または対象ファイルが重ならない）は並列グループとして同時に動かし、書き込みや順序依存は直列に保つ。
+- 同じファイルを複数エージェントで同時に触らせない。独立性が判断できないときは直列にする。
