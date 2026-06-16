@@ -8,3 +8,4 @@
 - 破壊的操作やリポジトリ外の変更は事前に確認する。
 - 秘密情報や実行時データは追加しない。
 - スクリプトを変更したら `python3 -m pytest -q` を実行する。
+- agent / skill の定義を変更したら `python3 scripts/validate-toolbox.py` を実行する。

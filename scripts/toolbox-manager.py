@@ -40,6 +40,7 @@ EXCLUDED_NAMES = {
     "installation_id",
     "settings.local.json",
     ".gitkeep",
+    "README.md",
     "projects",
     "todos",
     "logs",
