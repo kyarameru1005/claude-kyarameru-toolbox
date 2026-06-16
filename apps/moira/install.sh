@@ -62,6 +62,23 @@ tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 echo "moira-install: ${version} (${target}) を取得中..."
 curl -fSL "$url" -o "$tmp/$asset" || err "ダウンロード失敗: $url"
+
+# --- チェックサム検証（必須。取得失敗・不一致は中止）---
+echo "moira-install: チェックサムを検証中..."
+curl -fsSL "${url}.sha256" -o "$tmp/$asset.sha256" \
+    || err "チェックサム (${url}.sha256) の取得に失敗。検証できないため中止します"
+expected="$(tr -d '[:space:]' < "$tmp/$asset.sha256")"
+if command -v sha256sum >/dev/null 2>&1; then
+    actual="$(sha256sum "$tmp/$asset" | awk '{print $1}')"
+elif command -v shasum >/dev/null 2>&1; then
+    actual="$(shasum -a 256 "$tmp/$asset" | awk '{print $1}')"
+else
+    err "sha256 を計算するコマンド（sha256sum / shasum）が見つからない"
+fi
+[ -n "$expected" ] || err "チェックサムが空。中止します"
+[ "$expected" = "$actual" ] \
+    || err "チェックサム不一致（期待: $expected / 実際: $actual）。中止します"
+
 tar -C "$tmp" -xzf "$tmp/$asset" || err "アーカイブの展開に失敗"
 [ -f "$tmp/moira" ] || err "アーカイブに moira が含まれていない"
 chmod +x "$tmp/moira"

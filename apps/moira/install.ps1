@@ -31,6 +31,21 @@ $tmp = Join-Path $env:TEMP $asset
 
 Write-Host "moira-install: $version ($target) を取得中..."
 Invoke-WebRequest -Uri $url -OutFile $tmp
+
+# --- チェックサム検証（必須。取得失敗・不一致は中止）---
+Write-Host "moira-install: チェックサムを検証中..."
+try {
+    $expected = (Invoke-RestMethod -Uri "$url.sha256").Trim().ToLower()
+} catch {
+    Remove-Item $tmp -Force -ErrorAction SilentlyContinue
+    throw "moira-install: チェックサム ($url.sha256) の取得に失敗。検証できないため中止します"
+}
+$actual = (Get-FileHash -Path $tmp -Algorithm SHA256).Hash.ToLower()
+if (-not $expected -or $expected -ne $actual) {
+    Remove-Item $tmp -Force -ErrorAction SilentlyContinue
+    throw "moira-install: チェックサム不一致（期待: $expected / 実際: $actual）。中止します"
+}
+
 Expand-Archive -Path $tmp -DestinationPath $installDir -Force
 Remove-Item $tmp -Force
 
