@@ -10,7 +10,20 @@ use moira::store;
 #[command(
     name = "moira",
     version,
-    about = "タスクと再開コンテキストを .ai/moira.json で管理する"
+    about = "タスクと再開コンテキストを .ai/moira.json で管理する",
+    after_help = "\
+使用例:
+  moira init                      # カレントに .ai/moira.json を作成
+  moira add \"設計を書く\"           # タスクを追加（todo）
+  moira list                      # 一覧（[ ]=todo [~]=進行中 [x]=完了）
+  moira start 1                   # 進行中へ
+  moira done 1                    # 完了へ
+  moira goal/at/next \"...\"        # 目的・現在地・次の一手を記録
+  moira decide \"...\"              # 決定ログに追記
+  moira show                      # 再開ビュー（meta + タスク）
+
+中断後の再開時は、まず `moira show` を読み、Git と突き合わせてから続行する。
+各サブコマンドの詳細は `moira help <COMMAND>` を参照。"
 )]
 struct Cli {
     #[command(subcommand)]

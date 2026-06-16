@@ -3,6 +3,10 @@ name = "moira"
 version = "0.1.0"
 edition = "2021"
 description = "タスクと再開コンテキストを .ai/moira.json で管理する CLI"
+readme = "README.md"
+repository = "https://github.com/kyarameru1005/claude-kyarameru-toolbox"
+keywords = ["cli", "task", "ledger", "resume"]
+categories = ["command-line-utilities"]
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
