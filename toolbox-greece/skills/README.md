@@ -34,6 +34,7 @@
 - `argo-git-flow`: Git 作業フロー。ブランチ・コミット・プッシュ・PR を安全に進める。
 - `atlas-repository`: リポジトリ構造整理。配置・命名・境界を一定に保つ。
 - `cerberus-permissions`: 権限管理。リポジトリルートの `.claude/settings.json` で allow / ask / deny を定める。
+- `agora-dialogue`: 他 AI との会話。`.ai/dialogue/` の受け渡しファイルでレビュー依頼・相談をやり取りする。
 
 ## 基本の使い分け
 
@@ -57,6 +58,7 @@
 - Git 作業: `argo-git-flow`
 - リポジトリ整理: `atlas-repository`
 - 権限管理: `cerberus-permissions`
+- 他 AI との会話: `agora-dialogue`
 - オーケストレーション: `zeus-orchestrate`
 
 ## 典型的な組み合わせ

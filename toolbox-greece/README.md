@@ -14,7 +14,7 @@
 - `CLAUDE.md`: 全体の行動原則
 - `settings.json`: Claude Code の基本設定（権限の allow / deny を含む）
 - `agents/`: 役割別サブエージェント定義（`zeus`, `hermes`, `daedalus`, `aphrodite`, `hephaestus`, `athena`, `themis`, `ares`, `khaos`, `apollo`, `chronos`）
-- `skills/`: 作業パターン（`zeus-orchestrate`, `labyrinth-explore`, `oracle-design`, `muse-interface`, `muse-modern`, `muse-luxury`, `muse-minimal`, `muse-bold`, `muse-avantgarde`, `forge-implement`, `aegis-review`, `gauntlet-verify`, `pandora-chaos`, `chronicle-docs`, `argo-git-flow`, `atlas-repository`, `cerberus-permissions`）
+- `skills/`: 作業パターン（`zeus-orchestrate`, `labyrinth-explore`, `oracle-design`, `muse-interface`, `muse-modern`, `muse-luxury`, `muse-minimal`, `muse-bold`, `muse-avantgarde`, `forge-implement`, `aegis-review`, `gauntlet-verify`, `pandora-chaos`, `chronicle-docs`, `argo-git-flow`, `atlas-repository`, `cerberus-permissions`, `agora-dialogue`）
 - `commands/`, `hooks/`, `plugins/`, `mcp/`, `memory/`: 必要になった時点で使う拡張用ディレクトリ
 
 ## agents と skills の使い分け
@@ -42,6 +42,7 @@
 | Git 作業 | （メイン Claude が担当） | `argo-git-flow` |
 | 構造整理 | （メイン Claude が担当） | `atlas-repository` |
 | 権限管理 | （メイン Claude が担当） | `cerberus-permissions` |
+| 他 AI との会話 | （メイン Claude が担当） | `agora-dialogue` |
 
 ## 使い方
 
