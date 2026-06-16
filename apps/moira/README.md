@@ -32,6 +32,36 @@ irm https://raw.githubusercontent.com/kyarameru1005/claude-kyarameru-toolbox/mai
 
 対応プラットフォーム: macOS (Apple Silicon / Intel) ・ Linux x86_64 ・ Windows x86_64。
 
+## アップデート
+
+インストール用ワンライナーを再実行すると最新リリースへ更新される（既存バイナリを上書き）。
+
+```bash
+# macOS / Linux
+curl -fsSL https://raw.githubusercontent.com/kyarameru1005/claude-kyarameru-toolbox/main/apps/moira/install.sh | sh
+```
+
+```powershell
+# Windows
+irm https://raw.githubusercontent.com/kyarameru1005/claude-kyarameru-toolbox/main/apps/moira/install.ps1 | iex
+```
+
+特定バージョンへ固定したい場合は `MOIRA_VERSION` を指定する。
+
+## アンインストール
+
+```bash
+# macOS / Linux（/usr/local/bin から削除。BINDIR を変えた場合は同じ値を渡す）
+curl -fsSL https://raw.githubusercontent.com/kyarameru1005/claude-kyarameru-toolbox/main/apps/moira/uninstall.sh | sh
+```
+
+```powershell
+# Windows（インストール先を削除し、ユーザー PATH からも除去）
+irm https://raw.githubusercontent.com/kyarameru1005/claude-kyarameru-toolbox/main/apps/moira/uninstall.ps1 | iex
+```
+
+各リポジトリの `.ai/moira.json`（タスク台帳）は削除されないため、不要なら手動で消す。
+
 ## ビルド（開発者向け）
 
 ソースからビルドする場合（Rust 必要）:
