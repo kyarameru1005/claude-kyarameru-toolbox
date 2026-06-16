@@ -22,6 +22,12 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 AGENT_REQUIRED_KEYS = ("name", "description", "tools", "model")
 SKILL_REQUIRED_KEYS = ("name", "description")
 ALLOWED_MODELS = {"opus", "sonnet", "haiku", "inherit"}
+# agent の tools に書ける既知ツール。typo（例: Reed）を検出するために使う。
+ALLOWED_TOOLS = {
+    "Task", "Bash", "BashOutput", "KillShell", "Glob", "Grep", "Read",
+    "Edit", "Write", "NotebookEdit", "WebFetch", "WebSearch", "TodoWrite",
+    "SlashCommand",
+}
 
 
 def parse_frontmatter(text: str) -> dict[str, str] | None:
@@ -44,6 +50,11 @@ def parse_frontmatter(text: str) -> dict[str, str] | None:
 
 def is_valid_model(value: str) -> bool:
     return value in ALLOWED_MODELS or value.startswith("claude-")
+
+
+def is_valid_tool(value: str) -> bool:
+    # `*`（全許可）と MCP ツール（mcp__server__tool）は名前を固定できないため許容する。
+    return value == "*" or value.startswith("mcp__") or value in ALLOWED_TOOLS
 
 
 def check_readme_lists(readme: Path, names: list[str], rel: str, errors: list[str]) -> None:
@@ -80,6 +91,10 @@ def validate_agents(agents_dir: Path, rel: str, errors: list[str]) -> None:
         model = front.get("model", "")
         if model and not is_valid_model(model):
             errors.append(f"{where}: model '{model}' が不正")
+        tools = front.get("tools", "")
+        for tool in (t.strip() for t in tools.split(",")):
+            if tool and not is_valid_tool(tool):
+                errors.append(f"{where}: 不明なツール '{tool}'")
         if name:
             if name in seen:
                 errors.append(f"{where}: name '{name}' が {seen[name].name} と重複")

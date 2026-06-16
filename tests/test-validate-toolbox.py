@@ -119,6 +119,32 @@ def test_invalid_model_fails(tmp_path):
     assert "model" in result.stderr
 
 
+def test_unknown_tool_fails(tmp_path):
+    tb = tmp_path / "toolbox-greece"
+    write(
+        tb / "agents" / "zeus.md",
+        "---\nname: zeus\ndescription: x\ntools: Read, Reed, Bash\nmodel: opus\n---\n",
+    )
+
+    result = run_in(tmp_path, "greece")
+
+    assert result.returncode == 1
+    assert "不明なツール 'Reed'" in result.stderr
+
+
+def test_mcp_and_wildcard_tools_pass(tmp_path):
+    tb = tmp_path / "toolbox-greece"
+    write(
+        tb / "agents" / "zeus.md",
+        "---\nname: zeus\ndescription: x\ntools: *, mcp__server__do\nmodel: opus\n---\n",
+    )
+    write(tb / "agents" / "README.md", "# agents\n\n- `zeus`\n")
+
+    result = run_in(tmp_path, "greece")
+
+    assert result.returncode == 0, result.stderr
+
+
 def test_duplicate_agent_name_fails(tmp_path):
     tb = tmp_path / "toolbox-greece"
     write(tb / "agents" / "zeus.md", AGENT.format(name="zeus", model="opus"))
