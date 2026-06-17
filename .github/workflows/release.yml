@@ -40,12 +40,22 @@ jobs:
           cd "target/${{ matrix.target }}/release"
           if [ "${{ runner.os }}" = "Windows" ]; then
             7z a "$GITHUB_WORKSPACE/${asset}.zip" moira.exe >/dev/null
-            echo "ASSET=${asset}.zip" >> "$GITHUB_ENV"
+            file="${asset}.zip"
           else
             tar -czf "$GITHUB_WORKSPACE/${asset}.tar.gz" moira
-            echo "ASSET=${asset}.tar.gz" >> "$GITHUB_ENV"
+            file="${asset}.tar.gz"
+          fi
+          echo "ASSET=${file}" >> "$GITHUB_ENV"
+          # 配布物の sha256（16進ハッシュのみ）を生成。インストーラ側で検証する。
+          cd "$GITHUB_WORKSPACE"
+          if command -v sha256sum >/dev/null 2>&1; then
+            sha256sum "$file" | awk '{print $1}' > "${file}.sha256"
+          else
+            shasum -a 256 "$file" | awk '{print $1}' > "${file}.sha256"
           fi
       - name: Upload to release
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ env.ASSET }}
+          files: |
+            ${{ env.ASSET }}
+            ${{ env.ASSET }}.sha256
