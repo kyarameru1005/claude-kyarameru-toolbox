@@ -5,6 +5,10 @@ Checks the frontmatter of ``agents/*.md`` and ``skills/*/SKILL.md`` so that
 definitions stay consistent as the toolbox grows: required keys are present,
 ``name`` matches the file/directory, names are unique, and ``model`` is known.
 
+Also checks distributed config files: ``settings.json`` (valid JSON, has a
+``deny`` when ``permissions`` is present, no absolute paths), ``mcp/*.json``
+(valid JSON, no absolute paths), and ``hooks/*`` scripts (no absolute paths).
+
 Usage::
 
     python3 scripts/validate-toolbox.py            # all toolbox* directories
@@ -14,6 +18,8 @@ Usage::
 
 from __future__ import annotations
 
+import json
+import re
 import sys
 from pathlib import Path
 
@@ -21,6 +27,12 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 AGENT_REQUIRED_KEYS = ("name", "description", "tools", "model")
 SKILL_REQUIRED_KEYS = ("name", "description")
+# 配布される設定ファイルに混入してはいけない絶対パス / マシン固有パス。
+ABSOLUTE_PATH_PATTERNS = (
+    re.compile(r"/Users/"),
+    re.compile(r"/home/[A-Za-z0-9._-]+"),
+    re.compile(r"[A-Za-z]:\\+Users", re.IGNORECASE),
+)
 ALLOWED_MODELS = {"opus", "sonnet", "haiku", "inherit"}
 # agent の tools に書ける既知ツール。typo（例: Reed）を検出するために使う。
 ALLOWED_TOOLS = {
@@ -133,11 +145,70 @@ def validate_skills(skills_dir: Path, rel: str, errors: list[str]) -> None:
     check_readme_lists(skills_dir / "README.md", list(seen), f"{rel}/skills", errors)
 
 
+def scan_absolute_paths(text: str, where: str, errors: list[str]) -> None:
+    """配布物に絶対パス / マシン固有パスが混入していないか確認する。"""
+    for pattern in ABSOLUTE_PATH_PATTERNS:
+        match = pattern.search(text)
+        if match:
+            errors.append(
+                f"{where}: 絶対パス/マシン固有パスらしき記述 '{match.group(0)}'"
+                "（'~' や '$HOME' を使う）"
+            )
+            return
+
+
+def check_json(text: str, where: str, errors: list[str]) -> bool:
+    """JSON として妥当か確認する。妥当なら True。"""
+    try:
+        json.loads(text)
+    except json.JSONDecodeError as exc:
+        errors.append(f"{where}: JSON として不正（{exc.msg}, 行 {exc.lineno}）")
+        return False
+    return True
+
+
+def validate_configs(toolbox: Path, rel: str, errors: list[str]) -> None:
+    """配布される settings.json / hooks / mcp の妥当性と安全性を確認する。"""
+    # settings.json: 妥当な JSON で、permissions があれば deny を持つ。絶対パス禁止。
+    settings = toolbox / "settings.json"
+    if settings.is_file():
+        where = f"{rel}/settings.json"
+        text = settings.read_text(encoding="utf-8")
+        scan_absolute_paths(text, where, errors)
+        if check_json(text, where, errors):
+            data = json.loads(text)
+            perms = data.get("permissions")
+            if isinstance(perms, dict) and "deny" not in perms:
+                errors.append(
+                    f"{where}: permissions に deny がない"
+                    "（破壊的操作を遮断する deny を明示する）"
+                )
+
+    # mcp/*.json: 妥当な JSON で絶対パス禁止。
+    mcp_dir = toolbox / "mcp"
+    if mcp_dir.is_dir():
+        for path in sorted(mcp_dir.glob("*.json")):
+            where = f"{rel}/mcp/{path.name}"
+            text = path.read_text(encoding="utf-8")
+            scan_absolute_paths(text, where, errors)
+            check_json(text, where, errors)
+
+    # hooks/*: スクリプトに絶対パスを書かない（$HOME 相対にする）。
+    hooks_dir = toolbox / "hooks"
+    if hooks_dir.is_dir():
+        for path in sorted(hooks_dir.iterdir()):
+            if not path.is_file() or path.name in ("README.md", ".gitkeep"):
+                continue
+            where = f"{rel}/hooks/{path.name}"
+            scan_absolute_paths(path.read_text(encoding="utf-8"), where, errors)
+
+
 def validate_toolbox(toolbox: Path) -> list[str]:
     errors: list[str] = []
     rel = toolbox.name
     validate_agents(toolbox / "agents", rel, errors)
     validate_skills(toolbox / "skills", rel, errors)
+    validate_configs(toolbox, rel, errors)
     return errors
 
 

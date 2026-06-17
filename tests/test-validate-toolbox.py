@@ -165,3 +165,78 @@ def test_skill_missing_manifest_fails(tmp_path):
 
     assert result.returncode == 1
     assert "SKILL.md が無い" in result.stderr
+
+
+def _valid_base(tb):
+    """設定検証テスト用の、agents/skills が妥当な最小 toolbox を作る。"""
+    write(tb / "agents" / "zeus.md", AGENT.format(name="zeus", model="opus"))
+    write(tb / "agents" / "README.md", "# agents\n\n- `zeus`\n")
+    write(tb / "skills" / "forge-implement" / "SKILL.md", SKILL.format(name="forge-implement"))
+    write(tb / "skills" / "README.md", "# skills\n\n- `forge-implement`\n")
+
+
+def test_settings_invalid_json_fails(tmp_path):
+    tb = tmp_path / "toolbox-greece"
+    _valid_base(tb)
+    write(tb / "settings.json", '{"permissions": {"deny": []},}\n')  # 末尾カンマ
+
+    result = run_in(tmp_path, "greece")
+
+    assert result.returncode == 1
+    assert "JSON として不正" in result.stderr
+
+
+def test_settings_absolute_path_fails(tmp_path):
+    tb = tmp_path / "toolbox-greece"
+    _valid_base(tb)
+    write(tb / "settings.json", '{"permissions": {"deny": []}, "env": {"P": "/Users/me/bin"}}\n')
+
+    result = run_in(tmp_path, "greece")
+
+    assert result.returncode == 1
+    assert "絶対パス" in result.stderr
+
+
+def test_settings_missing_deny_fails(tmp_path):
+    tb = tmp_path / "toolbox-greece"
+    _valid_base(tb)
+    write(tb / "settings.json", '{"permissions": {"allow": ["Read"]}}\n')
+
+    result = run_in(tmp_path, "greece")
+
+    assert result.returncode == 1
+    assert "deny がない" in result.stderr
+
+
+def test_mcp_invalid_json_fails(tmp_path):
+    tb = tmp_path / "toolbox-greece"
+    _valid_base(tb)
+    write(tb / "mcp" / "servers.json", "{ not json }\n")
+
+    result = run_in(tmp_path, "greece")
+
+    assert result.returncode == 1
+    assert "JSON として不正" in result.stderr
+
+
+def test_hooks_absolute_path_fails(tmp_path):
+    tb = tmp_path / "toolbox-greece"
+    _valid_base(tb)
+    write(tb / "hooks" / "run.sh", "#!/bin/sh\ncat /Users/me/secret\n")
+
+    result = run_in(tmp_path, "greece")
+
+    assert result.returncode == 1
+    assert "絶対パス" in result.stderr
+
+
+def test_valid_configs_pass(tmp_path):
+    tb = tmp_path / "toolbox-greece"
+    _valid_base(tb)
+    write(tb / "settings.json", '{"permissions": {"allow": ["Read"], "deny": ["Bash(rm -rf:*)"]}}\n')
+    write(tb / "mcp" / "servers.json", '{"mcpServers": {}}\n')
+    write(tb / "hooks" / "run.sh", '#!/bin/sh\necho "$HOME/.claude"\n')
+
+    result = run_in(tmp_path, "greece")
+
+    assert result.returncode == 0, result.stderr
