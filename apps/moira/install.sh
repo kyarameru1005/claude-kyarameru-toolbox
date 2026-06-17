@@ -6,11 +6,12 @@
 #
 # 環境変数:
 #   MOIRA_VERSION  インストールするタグ（既定: 最新リリース）
-#   BINDIR         インストール先（既定: /usr/local/bin）
+#   BINDIR         インストール先（既定: $HOME/.local/bin。sudo 不要）
+#   MOIRA_SUDO     1 のとき、書き込み不可の場所へ sudo でインストール（明示オプトイン）
 set -eu
 
 REPO="kyarameru1005/claude-kyarameru-toolbox"
-BINDIR="${BINDIR:-/usr/local/bin}"
+BINDIR="${BINDIR:-$HOME/.local/bin}"
 
 err() {
     echo "moira-install: $*" >&2
@@ -83,14 +84,16 @@ tar -C "$tmp" -xzf "$tmp/$asset" || err "アーカイブの展開に失敗"
 [ -f "$tmp/moira" ] || err "アーカイブに moira が含まれていない"
 chmod +x "$tmp/moira"
 
-# --- インストール（書き込めなければ sudo）---
+# --- インストール（既定はユーザー領域。sudo は明示オプトインのみ）---
 mkdir -p "$BINDIR" 2>/dev/null || true
 if [ -w "$BINDIR" ]; then
     mv "$tmp/moira" "$BINDIR/moira"
-else
-    echo "moira-install: $BINDIR は書き込み不可のため sudo を使用します"
+elif [ "${MOIRA_SUDO:-}" = "1" ]; then
+    echo "moira-install: $BINDIR は書き込み不可。MOIRA_SUDO=1 のため sudo を使用します"
     sudo mkdir -p "$BINDIR"
     sudo mv "$tmp/moira" "$BINDIR/moira"
+else
+    err "$BINDIR に書き込めません。別の場所なら BINDIR=\$HOME/.local/bin を指定、システム全体なら MOIRA_SUDO=1 を付けて再実行してください"
 fi
 
 echo "moira-install: インストール完了 -> ${BINDIR}/moira"
