@@ -3,7 +3,9 @@
 `toolbox-greece` のサブエージェント定義（frontmatter 付き `*.md`）を置く場所です。
 役割名はギリシャ神話の神名で統一し、責務が名前から分かる状態を保ちます。
 
-各エージェントは `skills/` の作業パターンと並行ペアになっています（`hermes` ↔ `labyrinth-explore` など）。
+多くのエージェントは `skills/` の作業パターンと並行ペアになっています（`hermes` ↔ `labyrinth-explore` など）。
+ただし全エージェントに専用 skill があるわけではありません。`ares`（セキュリティ）と `chronos`（記録・振り返り）は
+専用 skill を持たず、それぞれ `aegis-review` / `chronicle-docs` で代替する例外です。
 agent と skill のどちらを使うかの判断は、ルート `README.md` の「agents と skills の使い分け」を参照してください。
 
 ## エージェント一覧

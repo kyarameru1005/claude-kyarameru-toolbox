@@ -15,6 +15,10 @@
 
 を表します。
 
+多くは agent と skill の並行ペアですが、全てが1対1ではありません。
+`ares`（セキュリティ）と `chronos`（記録・振り返り）は専用 skill を持たず、
+それぞれ `aegis-review` / `chronicle-docs` で兼ねる例外です。
+
 ## スキル一覧
 
 - `zeus-orchestrate`: オーケストレーション発火。役割分担と進行計画を明示する。
