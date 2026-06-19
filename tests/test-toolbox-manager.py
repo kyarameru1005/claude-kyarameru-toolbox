@@ -257,3 +257,34 @@ def test_manifest_tracks_only_managed_entries(tmp_path):
     )
     assert manifest["managed_by"] == "claude-kyarameru-toolbox"
     assert manifest["entries"] == ["settings.json", "skills"]
+
+
+def _load_manager_module():
+    """ハイフン入りファイル名のスクリプトをモジュールとして読み込む。"""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("toolbox_manager", SCRIPT)
+    module = importlib.util.module_from_spec(spec)
+    # dataclass デコレータが cls.__module__ を解決できるよう先に登録する。
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def _readme_managed_entries():
+    """README の「## 置換対象」セクションに列挙された対象名を抜き出す。"""
+    text = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+    section = text.split("## 置換対象", 1)[1].split("## 置換しないもの", 1)[0]
+    entries = []
+    for line in section.splitlines():
+        line = line.strip()
+        if line.startswith("- `") and line.endswith("`"):
+            name = line[3:-1].rstrip("/")
+            entries.append(name)
+    return entries
+
+
+def test_readme_matches_managed_entries():
+    """置換対象の単一情報源化: MANAGED_ENTRIES と README 記載が一致する。"""
+    module = _load_manager_module()
+    assert sorted(_readme_managed_entries()) == sorted(module.MANAGED_ENTRIES)
