@@ -230,13 +230,105 @@ def test_hooks_absolute_path_fails(tmp_path):
     assert "絶対パス" in result.stderr
 
 
+FULL_DENY = (
+    '["Bash(rm -rf:*)", "Bash(git push --force:*)", '
+    '"Bash(git push -f:*)", "Bash(git reset --hard:*)"]'
+)
+
+
 def test_valid_configs_pass(tmp_path):
     tb = tmp_path / "toolbox-greece"
     _valid_base(tb)
-    write(tb / "settings.json", '{"permissions": {"allow": ["Read"], "deny": ["Bash(rm -rf:*)"]}}\n')
+    write(
+        tb / "settings.json",
+        '{"permissions": {"allow": ["Read"], "deny": ' + FULL_DENY + "}}\n",
+    )
     write(tb / "mcp" / "servers.json", '{"mcpServers": {}}\n')
     write(tb / "hooks" / "run.sh", '#!/bin/sh\necho "$HOME/.claude"\n')
 
     result = run_in(tmp_path, "greece")
 
     assert result.returncode == 0, result.stderr
+
+
+def test_deny_missing_dangerous_op_fails(tmp_path):
+    tb = tmp_path / "toolbox-greece"
+    _valid_base(tb)
+    # rm -rf だけを塞ぎ、force push / reset --hard が抜けている。
+    write(tb / "settings.json", '{"permissions": {"deny": ["Bash(rm -rf:*)"]}}\n')
+
+    result = run_in(tmp_path, "greece")
+
+    assert result.returncode == 1
+    assert "force push" in result.stderr
+    assert "reset --hard" in result.stderr
+
+
+def test_empty_deny_is_not_checked_for_contents(tmp_path):
+    tb = tmp_path / "toolbox-greece"
+    _valid_base(tb)
+    # 空 deny（最小 toolbox のブランクスレート）は中身検査の対象外。
+    write(tb / "settings.json", '{"permissions": {"deny": []}}\n')
+
+    result = run_in(tmp_path, "greece")
+
+    assert result.returncode == 0, result.stderr
+
+
+def test_settings_secret_fails(tmp_path):
+    tb = tmp_path / "toolbox-greece"
+    _valid_base(tb)
+    write(
+        tb / "settings.json",
+        '{"permissions": {"deny": ' + FULL_DENY
+        + '}, "env": {"GH_TOKEN": "ghp_0123456789abcdefghijklmnopqrstuvwx"}}\n',
+    )
+
+    result = run_in(tmp_path, "greece")
+
+    assert result.returncode == 1
+    assert "GitHub トークン" in result.stderr
+
+
+def test_mcp_secret_fails(tmp_path):
+    tb = tmp_path / "toolbox-greece"
+    _valid_base(tb)
+    write(
+        tb / "mcp" / "servers.json",
+        '{"env": {"KEY": "sk-ant-0123456789abcdefghijklmnopqrstuvwx"}}\n',
+    )
+
+    result = run_in(tmp_path, "greece")
+
+    assert result.returncode == 1
+    assert "Anthropic API キー" in result.stderr
+
+
+def test_skill_name_not_kebab_fails(tmp_path):
+    tb = tmp_path / "toolbox-greece"
+    write(tb / "agents" / "zeus.md", AGENT.format(name="zeus", model="opus"))
+    write(tb / "agents" / "README.md", "# agents\n\n- `zeus`\n")
+    write(tb / "skills" / "Bad_Name" / "SKILL.md", SKILL.format(name="Bad_Name"))
+    write(tb / "skills" / "README.md", "# skills\n\n- `Bad_Name`\n")
+
+    result = run_in(tmp_path, "greece")
+
+    assert result.returncode == 1
+    assert "kebab-case" in result.stderr
+
+
+def test_skill_long_description_fails(tmp_path):
+    tb = tmp_path / "toolbox-greece"
+    write(tb / "agents" / "zeus.md", AGENT.format(name="zeus", model="opus"))
+    write(tb / "agents" / "README.md", "# agents\n\n- `zeus`\n")
+    long_desc = "あ" * 1100
+    write(
+        tb / "skills" / "forge-implement" / "SKILL.md",
+        f"---\nname: forge-implement\ndescription: {long_desc}\n---\n\n本文。\n",
+    )
+    write(tb / "skills" / "README.md", "# skills\n\n- `forge-implement`\n")
+
+    result = run_in(tmp_path, "greece")
+
+    assert result.returncode == 1
+    assert "description が長すぎる" in result.stderr

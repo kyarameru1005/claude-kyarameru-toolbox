@@ -6,8 +6,11 @@ definitions stay consistent as the toolbox grows: required keys are present,
 ``name`` matches the file/directory, names are unique, and ``model`` is known.
 
 Also checks distributed config files: ``settings.json`` (valid JSON, has a
-``deny`` when ``permissions`` is present, no absolute paths), ``mcp/*.json``
-(valid JSON, no absolute paths), and ``hooks/*`` scripts (no absolute paths).
+``deny`` when ``permissions`` is present, and that a non-empty ``deny`` blocks
+the mandated destructive operations; no absolute paths or secrets), ``mcp/*.json``
+(valid JSON, no absolute paths or secrets), and ``hooks/*`` scripts (no absolute
+paths or secrets). Skill ``name`` must be kebab-case and ``description`` within
+the length limit.
 
 Usage::
 
@@ -34,12 +37,31 @@ ABSOLUTE_PATH_PATTERNS = (
     re.compile(r"[A-Za-z]:\\+Users", re.IGNORECASE),
 )
 ALLOWED_MODELS = {"opus", "sonnet", "haiku", "inherit"}
+# skill / agent の name 命名規則と description の上限（Claude Code の制約に合わせる）。
+KEBAB_CASE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
+MAX_DESCRIPTION_LEN = 1024
 # agent の tools に書ける既知ツール。typo（例: Reed）を検出するために使う。
 ALLOWED_TOOLS = {
     "Task", "Bash", "BashOutput", "KillShell", "Glob", "Grep", "Read",
     "Edit", "Write", "NotebookEdit", "WebFetch", "WebSearch", "TodoWrite",
-    "SlashCommand",
+    "SlashCommand", "Skill",
 }
+# settings.json の deny が（deny を設定している場合に）必ず塞ぐべき破壊的操作。
+# ラベルと、deny エントリのいずれかに含まれていれば充足とみなす部分文字列群。
+REQUIRED_DENY_CAPABILITIES = (
+    ("rm -rf", ("rm -rf",)),
+    ("force push", ("push --force", "push -f")),
+    ("reset --hard", ("reset --hard",)),
+)
+# 配布物に混入してはいけない秘密情報らしき値。誤検知を避けるため十分に固有な形のみ。
+SECRET_PATTERNS = (
+    (re.compile(r"sk-ant-[A-Za-z0-9_-]{20,}"), "Anthropic API キーらしき値"),
+    (re.compile(r"sk-[A-Za-z0-9_-]{20,}"), "API キーらしき値 (sk-...)"),
+    (re.compile(r"gh[pousr]_[A-Za-z0-9]{20,}"), "GitHub トークンらしき値"),
+    (re.compile(r"AKIA[0-9A-Z]{16}"), "AWS アクセスキーらしき値"),
+    (re.compile(r"xox[baprs]-[A-Za-z0-9-]{10,}"), "Slack トークンらしき値"),
+    (re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"), "秘密鍵らしき値"),
+)
 
 
 def parse_frontmatter(text: str) -> dict[str, str] | None:
@@ -137,12 +159,37 @@ def validate_skills(skills_dir: Path, rel: str, errors: list[str]) -> None:
             errors.append(
                 f"{where}: name '{name}' がディレクトリ名 '{skill_path.name}' と一致しない"
             )
+        if name and not KEBAB_CASE.fullmatch(name):
+            errors.append(f"{where}: name '{name}' が kebab-case でない")
+        description = front.get("description", "")
+        if len(description) > MAX_DESCRIPTION_LEN:
+            errors.append(
+                f"{where}: description が長すぎる"
+                f"（{len(description)} > {MAX_DESCRIPTION_LEN} 文字）"
+            )
         if name:
             if name in seen:
                 errors.append(f"{where}: name '{name}' が重複")
             else:
                 seen[name] = manifest
     check_readme_lists(skills_dir / "README.md", list(seen), f"{rel}/skills", errors)
+
+
+def check_required_deny(deny: object, where: str, errors: list[str]) -> None:
+    """deny を設定している場合に、必須の破壊的操作が塞がれているか確認する。
+
+    deny が空（ブランクスレートの最小 toolbox 等）のときは方針未設定とみなし検査しない。
+    deny を実際に運用している toolbox に対してのみ、抜けを検出する。
+    """
+    if not isinstance(deny, list) or not deny:
+        return
+    joined = " ".join(str(entry) for entry in deny)
+    for label, needles in REQUIRED_DENY_CAPABILITIES:
+        if not any(needle in joined for needle in needles):
+            errors.append(
+                f"{where}: deny に '{label}' を塞ぐ指定がない"
+                "（破壊的操作は deny で明示する）"
+            )
 
 
 def scan_absolute_paths(text: str, where: str, errors: list[str]) -> None:
@@ -153,6 +200,18 @@ def scan_absolute_paths(text: str, where: str, errors: list[str]) -> None:
             errors.append(
                 f"{where}: 絶対パス/マシン固有パスらしき記述 '{match.group(0)}'"
                 "（'~' や '$HOME' を使う）"
+            )
+            return
+
+
+def scan_secrets(text: str, where: str, errors: list[str]) -> None:
+    """配布物に秘密情報らしき値が直書きされていないか確認する。"""
+    for pattern, label in SECRET_PATTERNS:
+        match = pattern.search(text)
+        if match:
+            errors.append(
+                f"{where}: {label}が直書きされている可能性"
+                "（環境変数や secret 参照で渡す）"
             )
             return
 
@@ -175,6 +234,7 @@ def validate_configs(toolbox: Path, rel: str, errors: list[str]) -> None:
         where = f"{rel}/settings.json"
         text = settings.read_text(encoding="utf-8")
         scan_absolute_paths(text, where, errors)
+        scan_secrets(text, where, errors)
         if check_json(text, where, errors):
             data = json.loads(text)
             perms = data.get("permissions")
@@ -183,6 +243,8 @@ def validate_configs(toolbox: Path, rel: str, errors: list[str]) -> None:
                     f"{where}: permissions に deny がない"
                     "（破壊的操作を遮断する deny を明示する）"
                 )
+            elif isinstance(perms, dict):
+                check_required_deny(perms["deny"], where, errors)
 
     # mcp/*.json: 妥当な JSON で絶対パス禁止。
     mcp_dir = toolbox / "mcp"
@@ -191,6 +253,7 @@ def validate_configs(toolbox: Path, rel: str, errors: list[str]) -> None:
             where = f"{rel}/mcp/{path.name}"
             text = path.read_text(encoding="utf-8")
             scan_absolute_paths(text, where, errors)
+            scan_secrets(text, where, errors)
             check_json(text, where, errors)
 
     # hooks/*: スクリプトに絶対パスを書かない（$HOME 相対にする）。
@@ -200,7 +263,9 @@ def validate_configs(toolbox: Path, rel: str, errors: list[str]) -> None:
             if not path.is_file() or path.name in ("README.md", ".gitkeep"):
                 continue
             where = f"{rel}/hooks/{path.name}"
-            scan_absolute_paths(path.read_text(encoding="utf-8"), where, errors)
+            text = path.read_text(encoding="utf-8")
+            scan_absolute_paths(text, where, errors)
+            scan_secrets(text, where, errors)
 
 
 def validate_toolbox(toolbox: Path) -> list[str]:
