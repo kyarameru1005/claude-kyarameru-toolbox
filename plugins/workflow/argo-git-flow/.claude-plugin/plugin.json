@@ -1,6 +1,6 @@
 {
   "name": "argo-git-flow",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Git と GitHub CLI を使い、作業前のブランチ確認、ブランチ作成や切り替え、ステージング、コミット、プッシュ、gh による PR 作成を安全に進めるときに使う。破壊的な Git 操作、意図しないファイルの混入、秘密情報の誤追加を避けながら Git 作業を完了させたい場合に向いている。",
   "author": {
     "name": "kyarameru"
