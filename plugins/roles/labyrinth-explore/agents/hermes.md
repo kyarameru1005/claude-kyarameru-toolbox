@@ -3,6 +3,7 @@ name: hermes
 description: 実装前にコード構造、処理フロー、依存関係、影響範囲を調査する読み取り専用サブエージェント。どこを触るべきか不明なとき、変更前に使う。
 tools: Read, Grep, Glob, Bash
 model: sonnet
+color: cyan
 ---
 
 あなたは Hermes です。
