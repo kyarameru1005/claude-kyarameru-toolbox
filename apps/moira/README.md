@@ -20,8 +20,11 @@
 curl -fsSL https://raw.githubusercontent.com/kyarameru1005/claude-kyarameru-toolbox/main/apps/moira/install.sh | sh
 ```
 
-- OS / arch を自動判定して該当バイナリを取得し、`/usr/local/bin/moira` に配置する。
-- 別の場所に入れたい場合: `curl -fsSL .../install.sh | BINDIR="$HOME/.local/bin" sh`
+- OS / arch を自動判定して該当バイナリを取得し、既定では `~/.local/bin/moira` に配置する（**sudo 不要**）。
+- `~/.local/bin` が PATH に無い場合はインストーラが警告するので、shell 設定に追加する。
+- システム全体（`/usr/local/bin` など）へ入れたい場合のみ sudo を明示オプトイン:
+  `curl -fsSL .../install.sh | BINDIR=/usr/local/bin MOIRA_SUDO=1 sh`
+- 別の場所に入れたい場合: `curl -fsSL .../install.sh | BINDIR="$HOME/bin" sh`
 - 特定バージョン: `curl -fsSL .../install.sh | MOIRA_VERSION=v0.1.0 sh`
 
 ### Windows（PowerShell）
@@ -55,7 +58,8 @@ irm https://raw.githubusercontent.com/kyarameru1005/claude-kyarameru-toolbox/mai
 ## アンインストール
 
 ```bash
-# macOS / Linux（/usr/local/bin から削除。BINDIR を変えた場合は同じ値を渡す）
+# macOS / Linux（既定 ~/.local/bin から削除。BINDIR を変えた場合は同じ値を渡す。
+# 書き込み不可の場所は MOIRA_SUDO=1 を付ける）
 curl -fsSL https://raw.githubusercontent.com/kyarameru1005/claude-kyarameru-toolbox/main/apps/moira/uninstall.sh | sh
 ```
 
