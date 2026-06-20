@@ -5,7 +5,7 @@
 
 - 対象リポジトリ: claude-kyarameru-toolbox
 - 粒度プリセット: 標準
-- 最終更新: 2026-06-16
+- 最終更新: 2026-06-20
 
 ## 層の責務
 
@@ -29,8 +29,7 @@
 | `Bash(git switch:*)` | repo | ブランチ切り替え |
 | `Bash(git add:*)` | repo | ステージまでは許可 |
 | `Bash(python3 -m pytest:*)` | repo | CLAUDE.md 指定のテストコマンド |
-| `Bash(python3 scripts/validate-toolbox.py:*)` | repo | agent / skill 定義の検証コマンド |
-| `Bash(python3 scripts/toolbox-manager.py:*)` | repo | toolbox 管理スクリプト |
+| `Bash(python3 scripts/validate.py:*)` | repo | marketplace / plugin 定義の検証コマンド |
 | `Bash(moira:*)` | repo | タスク台帳 CLI（`.ai/moira.json`） |
 
 ## ask（都度確認）

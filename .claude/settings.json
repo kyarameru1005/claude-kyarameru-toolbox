@@ -12,8 +12,7 @@
       "Bash(git switch:*)",
       "Bash(git add:*)",
       "Bash(python3 -m pytest:*)",
-      "Bash(python3 scripts/validate-toolbox.py:*)",
-      "Bash(python3 scripts/toolbox-manager.py:*)",
+      "Bash(python3 scripts/validate.py:*)",
       "Bash(moira:*)"
     ],
     "ask": [

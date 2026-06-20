@@ -15,8 +15,16 @@ jobs:
           python-version: "3.11"
       - name: Install dev dependencies
         run: python -m pip install -e ".[dev]"
-      - name: Validate toolbox definitions
-        run: python scripts/validate-toolbox.py
+      - name: Validate marketplace and plugins
+        run: python scripts/validate.py
+      - name: Validate with claude CLI (if available)
+        run: |
+          if command -v claude >/dev/null 2>&1; then
+            claude plugin validate .
+            for p in plugins/*/*/; do claude plugin validate "$p"; done
+          else
+            echo "claude CLI not available; scripts/validate.py で検証済み"
+          fi
       - name: Run tests
         run: python -m pytest -q
 

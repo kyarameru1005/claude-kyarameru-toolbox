@@ -1,0 +1,11 @@
+{
+  "name": "muse-cute",
+  "version": "0.1.0",
+  "description": "UI の見た目を「可愛い（kawaii）」系統に揃えたいときに使う。パステル・やわらかい丸み・控えめな動きで、配色・タイポ・余白のトーンを優しく愛らしくまとめる方向付けに向いている。",
+  "author": {
+    "name": "kyarameru"
+  },
+  "dependencies": [
+    "muse-interface"
+  ]
+}

@@ -1,0 +1,3 @@
+# cerberus-permissions
+
+リポジトリごとに Claude Code の権限を管理するため、リポジトリルートの `.claude/settings.json` を作成・更新し、allow / ask / deny の方針を一定に保つときに使う。権限の細分化、プロジェクト固有設定の分離、破壊的操作の遮断に向いている。

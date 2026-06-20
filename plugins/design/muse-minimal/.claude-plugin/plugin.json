@@ -1,0 +1,11 @@
+{
+  "name": "muse-minimal",
+  "version": "0.1.0",
+  "description": "UI の見た目を「シンプル/ミニマル」系統に揃えたいときに使う。要素最小・装飾を削る・モノクローム寄りで、配色・タイポ・余白のトーンを引き算でまとめる方向付けに向いている。",
+  "author": {
+    "name": "kyarameru"
+  },
+  "dependencies": [
+    "muse-interface"
+  ]
+}
