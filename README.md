@@ -36,7 +36,7 @@ claude plugin install muse-tech@kyarameru
 
 ### 個別 plugin
 
-- 役割系: `zeus-orchestrate`, `labyrinth-explore`, `oracle-design`, `forge-implement`,
+- 役割系: `olympus-orchestrate`, `labyrinth-explore`, `oracle-design`, `forge-implement`,
   `aegis-review`, `gauntlet-verify`, `chronicle-docs`, `pandora-chaos`,
   `atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue`。
 - デザイン系: `muse-interface`（基盤）, `muse-modern`, `muse-minimal`, `muse-bold`,

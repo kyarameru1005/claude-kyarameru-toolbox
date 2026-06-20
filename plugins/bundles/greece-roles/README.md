@@ -4,7 +4,7 @@ Zeus と役割別サブエージェント、調査・設計・実装・レビュ
 
 ## 依存
 
-- `zeus-orchestrate`
+- `olympus-orchestrate`
 - `labyrinth-explore`
 - `oracle-design`
 - `forge-implement`
