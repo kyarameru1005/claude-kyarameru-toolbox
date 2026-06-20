@@ -1,6 +1,6 @@
 {
   "name": "gauntlet-verify",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "テスト、チェック、構造化された確認で変更を検証するときに使う。何を実行するか決める、結果を解釈する、完了前に不足している証拠を見つける作業に向いている。",
   "author": {
     "name": "kyarameru"
