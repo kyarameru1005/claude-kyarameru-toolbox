@@ -1,6 +1,6 @@
 {
   "name": "oracle-design",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "実装前に構造、インターフェース、責務分担、アーキテクチャ方針を選ぶ必要があるときに使う。設計トレードオフ、選択肢比較、実装前の意思決定に向いている。",
   "author": {
     "name": "kyarameru"

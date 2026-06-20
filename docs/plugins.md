@@ -37,7 +37,11 @@
 
 ## 作業スキルのみ plugin（対応 agent なし）
 
-`atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue`, `mnemosyne-memory`。
+`atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue`, `mnemosyne-memory`, `dike-gate`。
+
+※ `dike-gate` は skill に加えて `hooks/hooks.json` を同梱し、`git commit` 直前と作業終了時に
+`.claude/quality-gate.sh` を実行する品質ゲート（未設置なら no-op）。ブロッキングのため `greece-roles`
+には含めず、必要なリポジトリで個別導入する。
 
 ## デザイン系 plugin
 
