@@ -1,0 +1,8 @@
+{
+  "name": "chronicle-docs",
+  "version": "0.1.0",
+  "description": "README、設計メモ、変更説明、プロジェクト記録を書いたり更新したりするときに使う。技術的な作業を、膨らませすぎず明確で再利用しやすい文書にする作業に向いている。",
+  "author": {
+    "name": "kyarameru"
+  }
+}

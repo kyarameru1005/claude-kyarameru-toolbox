@@ -1,0 +1,11 @@
+{
+  "name": "muse-retro",
+  "version": "0.1.0",
+  "description": "UI の見た目を「レトロ/ノスタルジック」系統に揃えたいときに使う。暖色のくすんだ配色・ヴィンテージ書体・粗い質感で、配色・タイポ・装飾のトーンを懐かしくまとめる方向付けに向いている。",
+  "author": {
+    "name": "kyarameru"
+  },
+  "dependencies": [
+    "muse-interface"
+  ]
+}

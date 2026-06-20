@@ -8,11 +8,18 @@
 - 破壊的操作やリポジトリ外の変更は事前に確認する。
 - 秘密情報や実行時データは追加しない。
 - スクリプトを変更したら `python3 -m pytest -q` を実行する。
-- agent / skill の定義を変更したら `python3 scripts/validate-toolbox.py` を実行する。
+- plugin / marketplace の定義（`plugins/`, `.claude-plugin/marketplace.json`）を変更したら `python3 scripts/validate.py` を実行する。
+
+## 配布構造（plugin marketplace）
+
+- このリポジトリは Claude Code の plugin marketplace。`/plugin marketplace add` → `/plugin install` で配布する。
+- `plugins/<category>/<name>/` が 1 インストール単位（自己完結）。`.claude-plugin/plugin.json` ＋ `skills/` `agents/` で構成する。カテゴリは `bundles`/`roles`/`workflow`/`design`。
+- 共有はファイル複製ではなく plugin 依存（`plugin.json` の `dependencies`）で表す。まとめパックは中身を持たない依存専用 plugin にする。
+- 全 plugin を `.claude-plugin/marketplace.json` に列挙する（`source` は `./plugins/<category>/<name>`、`category` 付き）。
 
 ## スキル / エージェントの使用範囲
 
-- カレントディレクトリ以下（`toolbox/`, `toolbox-greece/` など）にあるスキルやエージェントの定義は、直接の利用対象にしない（編集・検証の対象としてのみ扱う）。
+- `plugins/` 配下のスキルやエージェント定義は、このリポジトリでは編集・検証の対象としてのみ扱い、直接の利用対象にしない。
 - 実行時に利用してよいのは、次に登録されたスキル / エージェントのみとする。
   - リポジトリルートの `.claude/`（`.claude/skills`, `.claude/agents`）
   - ユーザーグローバルの `~/.claude/`（`~/.claude/skills`, `~/.claude/agents`）
