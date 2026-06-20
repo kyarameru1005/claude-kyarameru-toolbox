@@ -65,3 +65,7 @@ claude plugin validate .             # ネイティブ検証（任意）
 ```
 
 新しい plugin の追加手順は [docs/contributing.md](docs/contributing.md) を参照してください。
+
+## ライセンス
+
+[MIT License](LICENSE) © 2026 kyarameru1005
