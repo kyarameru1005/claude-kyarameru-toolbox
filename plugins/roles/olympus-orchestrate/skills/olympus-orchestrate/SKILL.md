@@ -1,9 +1,9 @@
 ---
-name: zeus-orchestrate
+name: olympus-orchestrate
 description: Zeus を入口にして役割分担を明示的に発火し、調査、設計、実装、レビュー、検証、文書化のどれを使うか判断して進行計画を作るときに使う。作業開始時のオーケストレーション、サブエージェント利用方針、チェックリスト管理に向いている。
 ---
 
-# zeus-orchestrate
+# olympus-orchestrate
 
 Zeus を入口にして、作業を始める前に役割分担と進め方を決めるために使う。
 
@@ -12,7 +12,7 @@ Zeus を入口にして、作業を始める前に役割分担と進め方を決
 ユーザーが次のように明示したら、このスキルを使う。
 
 ```text
-/zeus-orchestrate を使って進めてください。
+/olympus-orchestrate を使って進めてください。
 ```
 
 目的、前提、完了条件が書かれている場合は、それを優先する。

@@ -9,7 +9,7 @@
 - `bundles/`: 依存だけを束ねた meta plugin（まとめパック）。中身は持たない。
   - `greece-roles`, `muse-design`
 - `roles/`: サブエージェント ＋ 対応する作業スキル。
-  - `zeus-orchestrate`, `labyrinth-explore`, `oracle-design`, `forge-implement`,
+  - `olympus-orchestrate`, `labyrinth-explore`, `oracle-design`, `forge-implement`,
     `aegis-review`, `gauntlet-verify`, `chronicle-docs`, `pandora-chaos`
 - `workflow/`: 作業スキルのみ（対応する agent なし）。
   - `atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue`, `mnemosyne-memory`

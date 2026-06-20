@@ -16,14 +16,14 @@
 
 | plugin | 依存（自動導入される plugin） |
 | --- | --- |
-| `greece-roles` | `zeus-orchestrate`, `labyrinth-explore`, `oracle-design`, `forge-implement`, `aegis-review`, `gauntlet-verify`, `chronicle-docs`, `pandora-chaos`, `atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue` |
+| `greece-roles` | `olympus-orchestrate`, `labyrinth-explore`, `oracle-design`, `forge-implement`, `aegis-review`, `gauntlet-verify`, `chronicle-docs`, `pandora-chaos`, `atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue` |
 | `muse-design` | `muse-interface`, `muse-modern`, `muse-minimal`, `muse-bold`, `muse-cute`, `muse-playful`, `muse-retro`, `muse-luxury`, `muse-editorial`, `muse-tech`, `muse-avantgarde`, `muse-immersive` |
 
 ## 役割系 plugin（agent ＋ 作業スキル）
 
 | plugin | skill | agent |
 | --- | --- | --- |
-| `zeus-orchestrate` | zeus-orchestrate | zeus |
+| `olympus-orchestrate` | olympus-orchestrate | zeus |
 | `labyrinth-explore` | labyrinth-explore | hermes |
 | `oracle-design` | oracle-design | daedalus |
 | `forge-implement` | forge-implement | hephaestus |
@@ -49,6 +49,6 @@
 
 ## 補足
 
-- `zeus-orchestrate` 単体では、zeus が参照する他のサブエージェントは入りません。
+- `olympus-orchestrate` 単体では、zeus が参照する他のサブエージェントは入りません。
   フル編成には `greece-roles` の導入を推奨します。
 - 依存は同一 marketplace 内の bare name 指定で、install 時に自動解決・自動導入されます。
