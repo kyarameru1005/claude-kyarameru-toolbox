@@ -37,7 +37,7 @@
 
 ## 作業スキルのみ plugin（対応 agent なし）
 
-`atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue`。
+`atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue`, `mnemosyne-memory`。
 
 ## デザイン系 plugin
 
