@@ -93,6 +93,12 @@
       "category": "workflow"
     },
     {
+      "name": "mnemosyne-memory",
+      "source": "./plugins/workflow/mnemosyne-memory",
+      "description": "CLAUDE.md を編集した後にグローバルや上位階層の CLAUDE.md と突き合わせ、重複・冗長を取り除いてトークンの無駄を減らす。プロジェクト固有だけを残す整理に向いている。",
+      "category": "workflow"
+    },
+    {
       "name": "muse-interface",
       "source": "./plugins/design/muse-interface",
       "description": "実装前に UI/UX とビジュアルの方針を決める必要があるときに使う。画面レイアウト、コンポーネント構成、視覚階層、状態表現、一貫性、アクセシビリティの判断に向いている。",
