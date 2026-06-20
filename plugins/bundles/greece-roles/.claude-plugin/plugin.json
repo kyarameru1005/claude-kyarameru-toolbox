@@ -5,6 +5,7 @@
   "author": {
     "name": "kyarameru"
   },
+  "license": "MIT",
   "dependencies": [
     "zeus-orchestrate",
     "labyrinth-explore",
