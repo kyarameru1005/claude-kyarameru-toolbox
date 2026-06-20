@@ -5,7 +5,7 @@
   },
   "description": "Claude Code 向けの役割別エージェントとデザイン系統スキルを配布する marketplace。",
   "metadata": {
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "plugins": [
     {
