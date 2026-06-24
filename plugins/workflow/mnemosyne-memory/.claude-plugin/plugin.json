@@ -1,6 +1,6 @@
 {
   "name": "mnemosyne-memory",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "CLAUDE.md を編集した後にグローバルや上位階層の CLAUDE.md と突き合わせ、重複・冗長を取り除いてトークンの無駄を減らす。プロジェクト固有だけを残す整理に向いている。",
   "author": {
     "name": "kyarameru"
