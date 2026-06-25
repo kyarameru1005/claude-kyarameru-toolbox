@@ -12,16 +12,16 @@ marketplace を追加し、欲しい plugin を入れます。
 
 ```text
 /plugin marketplace add kyarameru1005/claude-kyarameru-toolbox
-/plugin install greece-roles@kyarameru     # 役割別エージェント＋作業スキル一式
-/plugin install muse-design@kyarameru       # デザイン系統スキル一式
-/plugin install muse-tech@kyarameru         # 個別スキルだけ（依存 muse-interface も自動導入）
+/plugin install greece-roles@kyarameru-claude     # 役割別エージェント＋作業スキル一式
+/plugin install muse-design@kyarameru-claude       # デザイン系統スキル一式
+/plugin install muse-tech@kyarameru-claude         # 個別スキルだけ（依存 muse-interface も自動導入）
 ```
 
 CLI でも同じことができます。
 
 ```bash
 claude plugin marketplace add kyarameru1005/claude-kyarameru-toolbox
-claude plugin install muse-tech@kyarameru
+claude plugin install muse-tech@kyarameru-claude
 ```
 
 導入後はスキルが `plugin名:スキル名` で名前空間化されます（例: `/muse-tech:muse-tech`）。
