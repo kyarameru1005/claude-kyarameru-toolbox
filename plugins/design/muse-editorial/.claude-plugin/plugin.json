@@ -1,6 +1,6 @@
 {
   "name": "muse-editorial",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "UI の見た目を「雑誌/エディトリアル」系統に揃えたいときに使う。セリフ中心・大きな見出し・非対称グリッドで、配色・タイポ・余白のトーンを読み物的で洗練された方向にまとめる。",
   "author": {
     "name": "kyarameru"
