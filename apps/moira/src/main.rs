@@ -81,15 +81,19 @@ fn run(cli: Cli) -> Result<(), String> {
     if let Command::Init { force } = &cli.command {
         let path = store::ledger_path_in(&cwd);
         if path.exists() && !force {
-            return Err(format!("{} は既に存在する (--force で上書き)", path.display()));
+            return Err(format!(
+                "{} は既に存在する (--force で上書き)",
+                path.display()
+            ));
         }
         store::save(&path, &Ledger::default())?;
         println!("初期化しました: {}", path.display());
         return Ok(());
     }
 
-    let path = store::find_ledger_path(&cwd)
-        .ok_or_else(|| ".ai/moira.json が見つからない。先に `moira init` を実行してください".to_string())?;
+    let path = store::find_ledger_path(&cwd).ok_or_else(|| {
+        ".ai/moira.json が見つからない。先に `moira init` を実行してください".to_string()
+    })?;
     let mut ledger = store::load(&path)?;
     let now = store::now();
 
@@ -173,7 +177,10 @@ fn print_show(ledger: &Ledger) {
     let meta = &ledger.meta;
     println!("# 再開ビュー");
     println!("目的    : {}", meta.goal.as_deref().unwrap_or("(未設定)"));
-    println!("現在地  : {}", meta.current.as_deref().unwrap_or("(未設定)"));
+    println!(
+        "現在地  : {}",
+        meta.current.as_deref().unwrap_or("(未設定)")
+    );
     println!("次の一手: {}", meta.next.as_deref().unwrap_or("(未設定)"));
     println!();
     println!("## 決定ログ");

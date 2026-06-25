@@ -1,0 +1,17 @@
+version: 2
+updates:
+  # GitHub Actions のバージョンを毎週確認する。
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+  # moira（Rust）の依存を毎週確認する。
+  - package-ecosystem: cargo
+    directory: /apps/moira
+    schedule:
+      interval: weekly
+  # Python の開発依存（pyproject.toml）を毎週確認する。
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
