@@ -50,6 +50,23 @@ jobs:
           fi
       - name: Run tests
         run: python -m pytest -q
+      - name: Audit Python dependencies (pip-audit)
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install pip-audit
+          pip-audit
+
+  shell:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - name: Shellcheck
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(find . -name '*.sh' -not -path './.git/*')
+          shellcheck "${files[@]}"
 
   rust:
     runs-on: ubuntu-latest
@@ -71,3 +88,9 @@ jobs:
           set -euo pipefail
           cargo build --verbose
           cargo test --verbose
+      - name: Audit dependencies (cargo audit)
+        working-directory: apps/moira
+        run: |
+          set -euo pipefail
+          cargo install cargo-audit --locked
+          cargo audit

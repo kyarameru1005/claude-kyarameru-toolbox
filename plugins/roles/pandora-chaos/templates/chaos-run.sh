@@ -108,7 +108,7 @@ rollback() {
   case "$MODE" in
     process)    [ -n "$RESTART_CMD" ] && eval "$RESTART_CMD" || true ;;
     resource)   pkill -P $$ stress-ng 2>/dev/null || true
-                [ -n "${_RES_PIDS:-}" ] && kill $_RES_PIDS 2>/dev/null || true ;;
+                [ -n "${_RES_PIDS:-}" ] && kill "$_RES_PIDS" 2>/dev/null || true ;;
     network)    tc qdisc del dev "$IFACE" root 2>/dev/null || true ;;
     dependency) [ -n "$START_CMD" ] && eval "$START_CMD" || true ;;
   esac
