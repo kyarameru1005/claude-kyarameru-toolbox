@@ -67,6 +67,7 @@ claude plugin validate .             # ネイティブ検証（任意）
 
 新しい plugin の追加手順は [docs/contributing.md](docs/contributing.md) を参照してください。
 反映されない・更新が届かないなどの問題は [docs/troubleshooting.md](docs/troubleshooting.md) を参照してください。
+バージョンごとの変更点は [CHANGELOG.md](CHANGELOG.md) を参照してください。
 
 ## ライセンス
 
