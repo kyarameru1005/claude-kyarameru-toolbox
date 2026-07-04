@@ -31,10 +31,17 @@ def write(path: Path, content: str) -> None:
 
 
 def make_plugin(
-    root: Path, name: str, *, skills=(), agents=(), dependencies=None, manifest_name=None
+    root: Path,
+    name: str,
+    *,
+    skills=(),
+    agents=(),
+    dependencies=None,
+    manifest_name=None,
+    version="0.1.0",
 ):
     pdir = root / "plugins" / name
-    manifest = {"name": manifest_name or name, "version": "0.1.0", "description": "x"}
+    manifest = {"name": manifest_name or name, "version": version, "description": "x"}
     if dependencies:
         manifest["dependencies"] = list(dependencies)
     write(pdir / ".claude-plugin" / "plugin.json", json.dumps(manifest, ensure_ascii=False) + "\n")
@@ -45,7 +52,7 @@ def make_plugin(
     return pdir
 
 
-def write_marketplace(root: Path, names, *, plugins=None):
+def write_marketplace(root: Path, names, *, plugins=None, metadata=None):
     entries = (
         plugins if plugins is not None else [{"name": n, "source": f"./plugins/{n}"} for n in names]
     )
@@ -55,6 +62,8 @@ def write_marketplace(root: Path, names, *, plugins=None):
         "description": "テスト",
         "plugins": entries,
     }
+    if metadata is not None:
+        data["metadata"] = metadata
     write(root / ".claude-plugin" / "marketplace.json", json.dumps(data, ensure_ascii=False) + "\n")
 
 
@@ -156,6 +165,41 @@ def test_skill_missing_manifest_fails(tmp_path):
     result = run_in(tmp_path)
     assert result.returncode == 1
     assert "SKILL.md が無い" in result.stderr
+
+
+def test_mismatched_plugin_versions_fail(tmp_path):
+    make_plugin(tmp_path, "muse-interface", skills=["muse-interface"], version="0.1.0")
+    make_plugin(
+        tmp_path,
+        "muse-tech",
+        skills=["muse-tech"],
+        dependencies=["muse-interface"],
+        version="0.2.0",
+    )
+    write_marketplace(tmp_path, ["muse-interface", "muse-tech"])
+    result = run_in(tmp_path)
+    assert result.returncode == 1
+    assert "version が揃っていない" in result.stderr
+
+
+def test_metadata_version_mismatch_fails(tmp_path):
+    base(tmp_path)  # all plugins 0.1.0
+    write_marketplace(tmp_path, ["muse-interface", "muse-tech"], metadata={"version": "0.9.9"})
+    result = run_in(tmp_path)
+    assert result.returncode == 1
+    assert "metadata.version" in result.stderr
+
+
+def test_entry_level_version_fails(tmp_path):
+    make_plugin(tmp_path, "muse-tech", skills=["muse-tech"])
+    write_marketplace(
+        tmp_path,
+        [],
+        plugins=[{"name": "muse-tech", "source": "./plugins/muse-tech", "version": "0.1.0"}],
+    )
+    result = run_in(tmp_path)
+    assert result.returncode == 1
+    assert "marketplace entry に version を書かない" in result.stderr
 
 
 def test_real_repo_is_valid():

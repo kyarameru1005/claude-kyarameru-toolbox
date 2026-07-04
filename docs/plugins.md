@@ -43,6 +43,9 @@
 `.claude/quality-gate.sh` を実行する品質ゲート（未設置なら no-op）。ブロッキングのため `greece-roles`
 には含めず、必要なリポジトリで個別導入する。
 
+※ `mnemosyne-memory` は CLAUDE.md 整理の単独ユーティリティのため、`greece-roles` バンドルには
+含めていない（役割編成とは性質が異なるので、必要なときに個別導入する）。
+
 ## デザイン系 plugin
 
 `muse-interface` が基盤（親スキル ＋ `aphrodite` エージェント）。
