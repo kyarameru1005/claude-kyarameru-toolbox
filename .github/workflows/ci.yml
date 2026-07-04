@@ -65,8 +65,10 @@ jobs:
       - name: Shellcheck
         run: |
           set -euo pipefail
+          # severity=warning: info レベルの様式指摘（SC2015 の A && B || C 等）は通し、
+          # 未使用変数・未定義動作など warning 以上の実害で落とす。
           mapfile -t files < <(find . -name '*.sh' -not -path './.git/*')
-          shellcheck "${files[@]}"
+          shellcheck --severity=warning "${files[@]}"
 
   rust:
     runs-on: ubuntu-latest
