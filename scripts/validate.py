@@ -139,8 +139,14 @@ def validate_skills(skills_dir: Path, rel: str, errors: list[str]) -> None:
             )
 
 
-def validate_plugin(pdir: Path, all_names: set[str], errors: list[str]) -> str | None:
-    """Validate one plugin directory. Returns the declared plugin name (or None)."""
+def validate_plugin(
+    pdir: Path, all_names: set[str], errors: list[str], versions: dict[str, str]
+) -> str | None:
+    """Validate one plugin directory. Returns the declared plugin name (or None).
+
+    Records the plugin's declared ``version`` in ``versions`` (keyed by rel path)
+    so the caller can check that every plugin shares one version.
+    """
     rel = str(pdir.relative_to(REPO_ROOT))
     manifest_path = pdir / ".claude-plugin" / "plugin.json"
     if not manifest_path.is_file():
@@ -150,6 +156,7 @@ def validate_plugin(pdir: Path, all_names: set[str], errors: list[str]) -> str |
     if data is None:
         return None
 
+    versions[rel] = data.get("version", "")
     name = data.get("name", "")
     if not name:
         errors.append(f"{rel}: plugin.json に 'name' が無い")
@@ -172,7 +179,33 @@ def validate_plugin(pdir: Path, all_names: set[str], errors: list[str]) -> str |
     return name or None
 
 
-def validate_marketplace(plugin_names: set[str], errors: list[str]) -> None:
+def validate_versions(data: dict, plugin_versions: dict[str, str], errors: list[str]) -> None:
+    """全 plugin と marketplace.metadata.version が単一 version に揃っているか検査する。
+
+    このリポジトリは全 plugin を同一 version で一括運用する（kairos-release スキル）。
+    version が割れると「更新が届かない」事故につながるため機械的に守る。
+    """
+    where = ".claude-plugin/marketplace.json"
+    distinct = sorted({v for v in plugin_versions.values() if v})
+    missing = sorted(rel for rel, v in plugin_versions.items() if not v)
+    for rel in missing:
+        errors.append(f"{rel}/.claude-plugin/plugin.json: 'version' が無い")
+    if len(distinct) > 1:
+        errors.append(
+            f"plugin の version が揃っていない（{', '.join(distinct)}）"
+            "。全 plugin を同一 version にする"
+        )
+    common = distinct[0] if len(distinct) == 1 else None
+    meta_version = (data.get("metadata") or {}).get("version")
+    if common and meta_version and meta_version != common:
+        errors.append(
+            f"{where}: metadata.version '{meta_version}' が plugin の version '{common}' と一致しない"
+        )
+
+
+def validate_marketplace(
+    plugin_names: set[str], plugin_versions: dict[str, str], errors: list[str]
+) -> None:
     where = ".claude-plugin/marketplace.json"
     if not MARKETPLACE.is_file():
         errors.append(f"{where}: が存在しない")
@@ -180,6 +213,7 @@ def validate_marketplace(plugin_names: set[str], errors: list[str]) -> None:
     data = load_json(MARKETPLACE, where, errors)
     if data is None:
         return
+    validate_versions(data, plugin_versions, errors)
     for key in ("name", "owner", "plugins"):
         if key not in data:
             errors.append(f"{where}: 必須キー '{key}' が無い")
@@ -208,6 +242,11 @@ def validate_marketplace(plugin_names: set[str], errors: list[str]) -> None:
         loc = f"{where}: plugin '{pname}'"
         if not KEBAB_RE.match(pname):
             errors.append(f"{loc}: name が kebab-case でない")
+        if "version" in entry:
+            errors.append(
+                f"{loc}: marketplace entry に version を書かない"
+                "（plugin.json を真実にする）"
+            )
         if pname in listed:
             errors.append(f"{loc}: name が重複")
         listed.add(pname)
@@ -245,9 +284,10 @@ def main() -> int:
     )
     plugin_names = {p.name for p in plugin_dirs}
 
+    versions: dict[str, str] = {}
     for pdir in plugin_dirs:
-        validate_plugin(pdir, plugin_names, errors)
-    validate_marketplace(plugin_names, errors)
+        validate_plugin(pdir, plugin_names, errors, versions)
+    validate_marketplace(plugin_names, versions, errors)
 
     if errors:
         print("検証エラー:", file=sys.stderr)

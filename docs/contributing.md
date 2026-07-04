@@ -38,5 +38,6 @@
 - 絶対パスやマシン固有パス（`/Users/...`, `/home/...`）を書かない。ホーム参照は `~` / `$HOME`。
 - 秘密情報をコミットしない。
 - `name` はディレクトリ名・marketplace 掲載名・`plugin.json` の `name` をすべて一致させる。
-- バージョンは当面リポジトリ一括で `0.1.0`。独立バージョニングが必要になったら
-  `claude plugin tag` ＋ semver 制約へ移行する。
+- バージョンは全 plugin を同一 version で一括運用する（`marketplace.json` の `metadata.version` も合わせる）。
+  リリース時の semver 更新は `kairos-release` スキル（`.claude/skills/kairos-release/`）の手順で行う。
+  新規追加時の `version` は、テンプレートの `0.1.0` ではなく現行の統一 version に合わせる。

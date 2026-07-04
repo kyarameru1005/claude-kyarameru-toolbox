@@ -39,6 +39,9 @@
 
 `atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue`, `mnemosyne-memory`。
 
+※ `mnemosyne-memory` は CLAUDE.md 整理の単独ユーティリティのため、`greece-roles` バンドルには
+含めていない（役割編成とは性質が異なるので、必要なときに個別導入する）。
+
 ## デザイン系 plugin
 
 `muse-interface` が基盤（親スキル ＋ `aphrodite` エージェント）。
