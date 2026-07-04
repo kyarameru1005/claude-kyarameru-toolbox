@@ -7,6 +7,7 @@
 #
 # 前提: コンテナ隔離・非本番環境でのみ実行する。本番を対象にしない。
 # このファイルは chaos-run.sh から source される（変数を設定するだけ。直接実行しない）。
+# shellcheck disable=SC2034  # 各変数は chaos-run.sh へ source され利用されるため、単体では未使用に見える
 
 # ---- 共通 -----------------------------------------------------------------
 # MODE: process | resource | network | dependency

@@ -50,6 +50,25 @@ jobs:
           fi
       - name: Run tests
         run: python -m pytest -q
+      - name: Audit Python dependencies (pip-audit)
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install pip-audit
+          pip-audit
+
+  shell:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - name: Shellcheck
+        run: |
+          set -euo pipefail
+          # severity=warning: info レベルの様式指摘（SC2015 の A && B || C 等）は通し、
+          # 未使用変数・未定義動作など warning 以上の実害で落とす。
+          mapfile -t files < <(find . -name '*.sh' -not -path './.git/*')
+          shellcheck --severity=warning "${files[@]}"
 
   rust:
     runs-on: ubuntu-latest
@@ -71,3 +90,9 @@ jobs:
           set -euo pipefail
           cargo build --verbose
           cargo test --verbose
+      - name: Audit dependencies (cargo audit)
+        working-directory: apps/moira
+        run: |
+          set -euo pipefail
+          cargo install cargo-audit --locked
+          cargo audit
