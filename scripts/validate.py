@@ -210,7 +210,8 @@ def validate_versions(data: dict, plugin_versions: dict[str, str], errors: list[
     meta_version = (data.get("metadata") or {}).get("version")
     if common and meta_version and meta_version != common:
         errors.append(
-            f"{where}: metadata.version '{meta_version}' が plugin の version '{common}' と一致しない"
+            f"{where}: metadata.version '{meta_version}' が "
+            f"plugin の version '{common}' と一致しない"
         )
 
 
@@ -255,8 +256,7 @@ def validate_marketplace(
             errors.append(f"{loc}: name が kebab-case でない")
         if "version" in entry:
             errors.append(
-                f"{loc}: marketplace entry に version を書かない"
-                "（plugin.json を真実にする）"
+                f"{loc}: marketplace entry に version を書かない（plugin.json を真実にする）"
             )
         if pname in listed:
             errors.append(f"{loc}: name が重複")

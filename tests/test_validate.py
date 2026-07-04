@@ -31,7 +31,14 @@ def write(path: Path, content: str) -> None:
 
 
 def make_plugin(
-    root: Path, name: str, *, skills=(), agents=(), dependencies=None, manifest_name=None, version="0.1.0"
+    root: Path,
+    name: str,
+    *,
+    skills=(),
+    agents=(),
+    dependencies=None,
+    manifest_name=None,
+    version="0.1.0",
 ):
     pdir = root / "plugins" / name
     manifest = {"name": manifest_name or name, "version": version, "description": "x"}
@@ -162,7 +169,13 @@ def test_skill_missing_manifest_fails(tmp_path):
 
 def test_mismatched_plugin_versions_fail(tmp_path):
     make_plugin(tmp_path, "muse-interface", skills=["muse-interface"], version="0.1.0")
-    make_plugin(tmp_path, "muse-tech", skills=["muse-tech"], dependencies=["muse-interface"], version="0.2.0")
+    make_plugin(
+        tmp_path,
+        "muse-tech",
+        skills=["muse-tech"],
+        dependencies=["muse-interface"],
+        version="0.2.0",
+    )
     write_marketplace(tmp_path, ["muse-interface", "muse-tech"])
     result = run_in(tmp_path)
     assert result.returncode == 1
@@ -180,9 +193,9 @@ def test_metadata_version_mismatch_fails(tmp_path):
 def test_entry_level_version_fails(tmp_path):
     make_plugin(tmp_path, "muse-tech", skills=["muse-tech"])
     write_marketplace(
-        tmp_path, [], plugins=[
-            {"name": "muse-tech", "source": "./plugins/muse-tech", "version": "0.1.0"}
-        ]
+        tmp_path,
+        [],
+        plugins=[{"name": "muse-tech", "source": "./plugins/muse-tech", "version": "0.1.0"}],
     )
     result = run_in(tmp_path)
     assert result.returncode == 1
