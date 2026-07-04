@@ -30,7 +30,9 @@ def write(path: Path, content: str) -> None:
     path.write_text(content, encoding="utf-8")
 
 
-def make_plugin(root: Path, name: str, *, skills=(), agents=(), dependencies=None, manifest_name=None, version="0.1.0"):
+def make_plugin(
+    root: Path, name: str, *, skills=(), agents=(), dependencies=None, manifest_name=None, version="0.1.0"
+):
     pdir = root / "plugins" / name
     manifest = {"name": manifest_name or name, "version": version, "description": "x"}
     if dependencies:
@@ -44,9 +46,9 @@ def make_plugin(root: Path, name: str, *, skills=(), agents=(), dependencies=Non
 
 
 def write_marketplace(root: Path, names, *, plugins=None, metadata=None):
-    entries = plugins if plugins is not None else [
-        {"name": n, "source": f"./plugins/{n}"} for n in names
-    ]
+    entries = (
+        plugins if plugins is not None else [{"name": n, "source": f"./plugins/{n}"} for n in names]
+    )
     data = {
         "name": "kyarameru",
         "owner": {"name": "kyarameru"},
@@ -115,8 +117,12 @@ def test_marketplace_entry_without_dir_fails(tmp_path):
 def test_duplicate_marketplace_name_fails(tmp_path):
     make_plugin(tmp_path, "muse-tech", skills=["muse-tech"])
     write_marketplace(
-        tmp_path, [], plugins=[{"name": "muse-tech", "source": "./plugins/muse-tech"},
-                               {"name": "muse-tech", "source": "./plugins/muse-tech"}]
+        tmp_path,
+        [],
+        plugins=[
+            {"name": "muse-tech", "source": "./plugins/muse-tech"},
+            {"name": "muse-tech", "source": "./plugins/muse-tech"},
+        ],
     )
     result = run_in(tmp_path)
     assert result.returncode == 1
@@ -186,3 +192,93 @@ def test_entry_level_version_fails(tmp_path):
 def test_real_repo_is_valid():
     result = subprocess.run([sys.executable, str(SCRIPT)], text=True, capture_output=True)
     assert result.returncode == 0, result.stderr
+
+
+def test_invalid_json_in_manifest_fails(tmp_path):
+    base(tmp_path)
+    manifest = tmp_path / "plugins" / "muse-tech" / ".claude-plugin" / "plugin.json"
+    manifest.write_text("{ not valid json", encoding="utf-8")
+    result = run_in(tmp_path)
+    assert result.returncode == 1
+    assert "JSON として不正" in result.stderr
+
+
+def test_non_kebab_plugin_name_fails(tmp_path):
+    make_plugin(tmp_path, "BadName", skills=["x"])
+    write_marketplace(tmp_path, ["BadName"])
+    result = run_in(tmp_path)
+    assert result.returncode == 1
+    assert "kebab-case でない" in result.stderr
+
+
+def test_agent_missing_required_key_fails(tmp_path):
+    base(tmp_path)
+    agent = tmp_path / "plugins" / "muse-interface" / "agents" / "aphrodite.md"
+    # model キーを欠落させる
+    agent.write_text(
+        "---\nname: aphrodite\ndescription: x\ntools: Read\n---\n",
+        encoding="utf-8",
+    )
+    result = run_in(tmp_path)
+    assert result.returncode == 1
+    assert "必須キー 'model' が無い" in result.stderr
+
+
+def test_agent_invalid_model_fails(tmp_path):
+    base(tmp_path)
+    agent = tmp_path / "plugins" / "muse-interface" / "agents" / "aphrodite.md"
+    agent.write_text(
+        "---\nname: aphrodite\ndescription: x\ntools: Read\nmodel: gpt-4\n---\n",
+        encoding="utf-8",
+    )
+    result = run_in(tmp_path)
+    assert result.returncode == 1
+    assert "model 'gpt-4' が不正" in result.stderr
+
+
+def test_claude_prefixed_model_is_allowed(tmp_path):
+    base(tmp_path)
+    agent = tmp_path / "plugins" / "muse-interface" / "agents" / "aphrodite.md"
+    agent.write_text(
+        "---\nname: aphrodite\ndescription: x\ntools: Read\nmodel: claude-opus-4-8\n---\n",
+        encoding="utf-8",
+    )
+    result = run_in(tmp_path)
+    assert result.returncode == 0, result.stderr
+
+
+def test_mcp_tool_is_allowed(tmp_path):
+    base(tmp_path)
+    agent = tmp_path / "plugins" / "muse-interface" / "agents" / "aphrodite.md"
+    agent.write_text(
+        "---\nname: aphrodite\ndescription: x\ntools: Read, mcp__foo__bar\nmodel: opus\n---\n",
+        encoding="utf-8",
+    )
+    result = run_in(tmp_path)
+    assert result.returncode == 0, result.stderr
+
+
+def test_source_dir_name_mismatch_fails(tmp_path):
+    base(tmp_path)
+    write_marketplace(
+        tmp_path,
+        [],
+        plugins=[
+            {"name": "muse-interface", "source": "./plugins/muse-interface"},
+            {"name": "muse-tech", "source": "./plugins/muse-interface"},
+        ],
+    )
+    result = run_in(tmp_path)
+    assert result.returncode == 1
+    assert "source ディレクトリ名" in result.stderr
+
+
+def test_marketplace_missing_owner_fails(tmp_path):
+    base(tmp_path)
+    mk = tmp_path / ".claude-plugin" / "marketplace.json"
+    data = json.loads(mk.read_text())
+    del data["owner"]
+    mk.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    result = run_in(tmp_path)
+    assert result.returncode == 1
+    assert "必須キー 'owner' が無い" in result.stderr

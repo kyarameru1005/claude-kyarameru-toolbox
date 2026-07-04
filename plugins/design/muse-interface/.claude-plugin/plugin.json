@@ -1,6 +1,6 @@
 {
   "name": "muse-interface",
-  "version": "0.2.1",
+  "version": "0.4.0",
   "description": "実装前に UI/UX とビジュアルの方針を決める必要があるときに使う。画面レイアウト、コンポーネント構成、視覚階層、状態表現、一貫性、アクセシビリティの判断に向いている。",
   "author": {
     "name": "kyarameru"

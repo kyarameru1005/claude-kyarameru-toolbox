@@ -12,6 +12,7 @@ jobs:
   build:
     name: ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -25,10 +26,14 @@ jobs:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
+      # 壊れたバイナリを公開しないよう、ビルド前にテストで検証する。
+      - name: Test
+        working-directory: apps/moira
+        run: cargo test --release --target ${{ matrix.target }}
       - name: Build
         working-directory: apps/moira
         run: cargo build --release --target ${{ matrix.target }}

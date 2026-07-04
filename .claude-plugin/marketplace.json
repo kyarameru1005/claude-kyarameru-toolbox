@@ -5,7 +5,7 @@
   },
   "description": "Claude Code 向けの役割別エージェントとデザイン系統スキルを配布する marketplace。",
   "metadata": {
-    "version": "0.2.1"
+    "version": "0.4.0"
   },
   "plugins": [
     {
@@ -65,7 +65,7 @@
     {
       "name": "pandora-chaos",
       "source": "./plugins/roles/pandora-chaos",
-      "description": "障害を意図的に注入してシステムの耐障害性を検証する実験を設計するときに使う。定常状態・仮説・爆発半径・観測・中断条件の整理に向いている。実際の障害注入は行わず設計に閉じる。",
+      "description": "障害を意図的に注入してシステムの耐障害性を検証する実験を設計し、コンテナ隔離環境でのみ安全に注入・観測・自動復旧まで行うときに使う。定常状態・仮説・爆発半径・観測・中断条件の整理と、管理された runner 経由の安全な実行に向いている。",
       "category": "roles"
     },
     {
@@ -96,6 +96,12 @@
       "name": "mnemosyne-memory",
       "source": "./plugins/workflow/mnemosyne-memory",
       "description": "CLAUDE.md を編集した後にグローバルや上位階層の CLAUDE.md と突き合わせ、重複・冗長を取り除いてトークンの無駄を減らす。プロジェクト固有だけを残す整理に向いている。",
+      "category": "workflow"
+    },
+    {
+      "name": "dike-gate",
+      "source": "./plugins/workflow/dike-gate",
+      "description": "コミット直前と作業終了時に品質チェック（lint/テスト/検証）を強制する品質ゲート。各リポジトリの .claude/quality-gate.sh を hooks で実行し、失敗すればコミットや終了をブロックする。スクリプトが無ければ素通り（no-op）。",
       "category": "workflow"
     },
     {

@@ -12,7 +12,7 @@
   - `olympus-orchestrate`, `labyrinth-explore`, `oracle-design`, `forge-implement`,
     `aegis-review`, `gauntlet-verify`, `chronicle-docs`, `pandora-chaos`
 - `workflow/`: 作業スキルのみ（対応する agent なし）。
-  - `atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue`, `mnemosyne-memory`
+  - `atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue`, `mnemosyne-memory`, `dike-gate`
 - `design/`: muse-* デザイン系統。基盤 `muse-interface` ＋各系統。
   - `muse-interface`, `muse-modern`, `muse-minimal`, `muse-bold`, `muse-cute`,
     `muse-playful`, `muse-retro`, `muse-luxury`, `muse-editorial`, `muse-tech`,

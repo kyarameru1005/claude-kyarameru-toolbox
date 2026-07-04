@@ -38,8 +38,19 @@ ABSOLUTE_PATH_PATTERNS = (
 )
 ALLOWED_MODELS = {"opus", "sonnet", "haiku", "inherit"}
 ALLOWED_TOOLS = {
-    "Task", "Bash", "BashOutput", "KillShell", "Glob", "Grep", "Read",
-    "Edit", "Write", "NotebookEdit", "WebFetch", "WebSearch", "TodoWrite",
+    "Task",
+    "Bash",
+    "BashOutput",
+    "KillShell",
+    "Glob",
+    "Grep",
+    "Read",
+    "Edit",
+    "Write",
+    "NotebookEdit",
+    "WebFetch",
+    "WebSearch",
+    "TodoWrite",
     "SlashCommand",
 }
 
