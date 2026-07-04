@@ -16,7 +16,7 @@
 
 | plugin | 依存（自動導入される plugin） |
 | --- | --- |
-| `greece-roles` | `olympus-orchestrate`, `labyrinth-explore`, `oracle-design`, `forge-implement`, `aegis-review`, `gauntlet-verify`, `chronicle-docs`, `pandora-chaos`, `atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue` |
+| `greece-roles` | `olympus-orchestrate`, `labyrinth-explore`, `oracle-design`, `forge-implement`, `aegis-review`, `gauntlet-verify`, `chronicle-docs`, `pandora-chaos`, `atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue`, `panacea-debug` |
 | `muse-design` | `muse-interface`, `muse-modern`, `muse-minimal`, `muse-bold`, `muse-cute`, `muse-playful`, `muse-retro`, `muse-luxury`, `muse-editorial`, `muse-tech`, `muse-avantgarde`, `muse-immersive` |
 
 ## 役割系 plugin（agent ＋ 作業スキル）
@@ -31,13 +31,14 @@
 | `gauntlet-verify` | gauntlet-verify | themis |
 | `chronicle-docs` | chronicle-docs | apollo, chronos |
 | `pandora-chaos` | pandora-chaos | khaos |
+| `panacea-debug` | panacea-debug | asclepius |
 
 ※ `ares`（セキュリティ）と `chronos`（記録・振り返り）は専用スキルを持たない例外のため、
 概念的に近い `aegis-review` / `chronicle-docs` に同梱しています。
 
 ## 作業スキルのみ plugin（対応 agent なし）
 
-`atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue`, `mnemosyne-memory`, `dike-gate`。
+`atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue`, `mnemosyne-memory`, `dike-gate`, `hestia-bootstrap`。
 
 ※ `dike-gate` は skill に加えて `hooks/hooks.json` を同梱し、`git commit` 直前と作業終了時に
 `.claude/quality-gate.sh` を実行する品質ゲート（未設置なら no-op）。ブロッキングのため `greece-roles`
@@ -45,6 +46,11 @@
 
 ※ `mnemosyne-memory` は CLAUDE.md 整理の単独ユーティリティのため、`greece-roles` バンドルには
 含めていない（役割編成とは性質が異なるので、必要なときに個別導入する）。
+
+※ `hestia-bootstrap` は新規リポジトリの初期化を一度きり行う導線で、設定の実体は持たず
+`cerberus-permissions`・`dike-gate`・`mnemosyne-memory`・`argo-git-flow` へ委譲する。初期化は
+一度きりのため `greece-roles` バンドルには含めない。導入時に依存の 4 plugin（`cerberus-permissions`・
+`dike-gate`・`mnemosyne-memory`・`argo-git-flow`）が自動導入される。
 
 ## デザイン系 plugin
 

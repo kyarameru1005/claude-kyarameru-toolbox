@@ -17,5 +17,6 @@ Zeus と役割別サブエージェント、調査・設計・実装・レビュ
 - `argo-git-flow`
 - `agora-dialogue`
 - `dike-gate`
+- `panacea-debug`
 
 個別に必要な分だけ入れることもできます。フル編成にはこのパックの導入を推奨します。
