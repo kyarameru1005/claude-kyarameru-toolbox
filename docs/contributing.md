@@ -41,3 +41,8 @@
 - バージョンは全 plugin を同一 version で一括運用する（`marketplace.json` の `metadata.version` も合わせる）。
   リリース時の semver 更新は `kairos-release` スキル（`.claude/skills/kairos-release/`）の手順で行う。
   新規追加時の `version` は、テンプレートの `0.1.0` ではなく現行の統一 version に合わせる。
+- エージェントの `model` は役割の性質で選ぶ（`inherit` にはしない。呼び出し元のモデルに依存すると
+  役割ごとの意図が失われるため）。
+  - `opus`: 判断・分析が主な役割（zeus, athena, ares, daedalus, khaos, asclepius など）。
+  - `sonnet`: 調査・実装・文書化など実行寄りの役割（hermes, hephaestus, apollo, chronos, themis など）。
+  新しい agent を追加するときは、既存の近い役割（判断寄りか実行寄りか）に合わせて選ぶ。
