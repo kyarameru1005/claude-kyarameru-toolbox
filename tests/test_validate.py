@@ -1,4 +1,5 @@
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -284,6 +285,37 @@ def test_source_dir_name_mismatch_fails(tmp_path):
     result = run_in(tmp_path)
     assert result.returncode == 1
     assert "source ディレクトリ名" in result.stderr
+
+
+def test_readme_scenario_names_exist_in_real_repo():
+    """README の『動作確認シナリオ』にある期待する発火先が実在することを確認する。
+
+    kairos-release 手順6 はシナリオ実行を前提にするため、リネームで
+    シナリオ記載が静かに壊れるのを防ぐ。
+    """
+    readmes = sorted((REPO_ROOT / "plugins").glob("*/*/README.md"))
+
+    skill_names = {p.name for p in REPO_ROOT.glob("plugins/*/*/skills/*") if p.is_dir()}
+    agent_names = {p.stem for p in REPO_ROOT.glob("plugins/*/*/agents/*.md")}
+    plugin_names = {p.name for p in REPO_ROOT.glob("plugins/*/*") if p.is_dir()}
+    known_names = skill_names | agent_names | plugin_names
+
+    scenario_readmes = []
+    missing = []
+    for readme in readmes:
+        text = readme.read_text(encoding="utf-8")
+        if "動作確認シナリオ" not in text:
+            continue
+        scenario_readmes.append(readme)
+        for line in text.splitlines():
+            if "期待する発火" not in line:
+                continue
+            for name in re.findall(r"`([a-z0-9-]+)`", line):
+                if name not in known_names:
+                    missing.append(f"{readme.relative_to(REPO_ROOT)}: '{name}'")
+
+    assert scenario_readmes, "『動作確認シナリオ』節を持つ README が見つからない"
+    assert not missing, "存在しない skill/agent/plugin 名が記載されている:\n" + "\n".join(missing)
 
 
 def test_marketplace_missing_owner_fails(tmp_path):

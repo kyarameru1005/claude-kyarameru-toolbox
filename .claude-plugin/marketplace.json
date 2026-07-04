@@ -5,7 +5,7 @@
   },
   "description": "Claude Code 向けの役割別エージェントとデザイン系統スキルを配布する marketplace。",
   "metadata": {
-    "version": "0.4.1"
+    "version": "0.5.0"
   },
   "plugins": [
     {
@@ -69,6 +69,12 @@
       "category": "roles"
     },
     {
+      "name": "panacea-debug",
+      "source": "./plugins/roles/panacea-debug",
+      "description": "バグ・不具合・再現する異常挙動を、再現手順の固定→一変数ずつの切り分け→二分探索→根本原因特定の順で直すときに使う。当てずっぽうの修正やログの追い方に迷うときに向いている。",
+      "category": "roles"
+    },
+    {
       "name": "atlas-repository",
       "source": "./plugins/workflow/atlas-repository",
       "description": "リポジトリ構造を一定に保つため、ディレクトリ責務、ファイル配置、命名、docs/tests/scripts などの境界を確認し、整理方針や必要な最小変更を決めるときに使う。構成の乱れ、重複、置き場所に迷うファイル、整理前の影響確認に向いている。",
@@ -102,6 +108,12 @@
       "name": "dike-gate",
       "source": "./plugins/workflow/dike-gate",
       "description": "コミット直前と作業終了時に品質チェック（lint/テスト/検証）を強制する品質ゲート。各リポジトリの .claude/quality-gate.sh を hooks で実行し、失敗すればコミットや終了をブロックする。スクリプトが無ければ素通り（no-op）。",
+      "category": "workflow"
+    },
+    {
+      "name": "hestia-bootstrap",
+      "source": "./plugins/workflow/hestia-bootstrap",
+      "description": "新しいリポジトリで Claude Code のハーネス一式を使い始めるとき、権限・品質ゲート・メモリ・Git 運用の初期セットアップを正しい順序で導入するために使う。設定の実体は持たず既存スキルへ委譲する。",
       "category": "workflow"
     },
     {
