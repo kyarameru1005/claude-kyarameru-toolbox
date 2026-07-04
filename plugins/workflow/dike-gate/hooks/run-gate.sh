@@ -19,6 +19,24 @@ fi
 # フックイベント名を取得（失敗しても続行）
 event="$(printf '%s' "$input" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("hook_event_name",""))' 2>/dev/null || true)"
 
+# PreToolUse かつ "commit" という語を含まないコマンドは素通り（判定失敗時はゲート実行側に倒す）。
+# git のオプション構文（-C/-c/--git-dir、絶対パス起動、$(...) 等）を正規表現で厳密に
+# 解析しようとすると必ず抜け穴ができ、実際の commit を見逃す（fail-open）方が
+# 過検知でゲートが余分に走るより危険。単語境界での部分一致に留め、見逃しをゼロにする。
+if [ "$event" = "PreToolUse" ]; then
+  is_commit="$(printf '%s' "$input" | python3 -c '
+import json, re, sys
+try:
+    cmd = json.load(sys.stdin).get("tool_input", {}).get("command", "")
+    print("1" if re.search(r"\bcommit\b", cmd) else "0")
+except Exception:
+    print("1")
+' 2>/dev/null || echo 1)"
+  if [ "$is_commit" != "1" ]; then
+    exit 0
+  fi
+fi
+
 # ゲート実行（出力を捕捉）。成功なら許可／停止可。
 if output="$(cd "$project_dir" && bash "$gate" 2>&1)"; then
   exit 0
