@@ -327,3 +327,75 @@ def test_marketplace_missing_owner_fails(tmp_path):
     result = run_in(tmp_path)
     assert result.returncode == 1
     assert "必須キー 'owner' が無い" in result.stderr
+
+
+VALID_HOOKS = {
+    "hooks": {
+        "PreToolUse": [
+            {
+                "matcher": "Bash",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "${CLAUDE_PLUGIN_ROOT}/hooks/run.sh",
+                        "timeout": 120,
+                    }
+                ],
+            }
+        ],
+        "Stop": [{"hooks": [{"type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/run.sh"}]}],
+    }
+}
+
+
+def write_hooks(pdir: Path, hooks: dict) -> None:
+    write(pdir / "hooks" / "hooks.json", json.dumps(hooks, ensure_ascii=False) + "\n")
+
+
+def test_valid_hooks_json_passes(tmp_path):
+    pdir = make_plugin(tmp_path, "muse-tech", skills=["muse-tech"])
+    write_hooks(pdir, VALID_HOOKS)
+    write_marketplace(tmp_path, ["muse-tech"])
+    result = run_in(tmp_path)
+    assert result.returncode == 0, result.stderr
+
+
+def test_unknown_key_in_hook_entry_fails(tmp_path):
+    # dike-gate で実際に起きた回帰: hooks スキーマに無いキーは黙って無視される。
+    pdir = make_plugin(tmp_path, "muse-tech", skills=["muse-tech"])
+    bad = json.loads(json.dumps(VALID_HOOKS))
+    bad["hooks"]["PreToolUse"][0]["hooks"][0]["if"] = "Bash(git commit:*)"
+    write_hooks(pdir, bad)
+    write_marketplace(tmp_path, ["muse-tech"])
+    result = run_in(tmp_path)
+    assert result.returncode == 1
+    assert "不明なキー 'if'" in result.stderr
+
+
+def test_unknown_key_in_hook_group_fails(tmp_path):
+    pdir = make_plugin(tmp_path, "muse-tech", skills=["muse-tech"])
+    bad = json.loads(json.dumps(VALID_HOOKS))
+    bad["hooks"]["PreToolUse"][0]["condition"] = "always"
+    write_hooks(pdir, bad)
+    write_marketplace(tmp_path, ["muse-tech"])
+    result = run_in(tmp_path)
+    assert result.returncode == 1
+    assert "不明なキー 'condition'" in result.stderr
+
+
+def test_hook_entry_missing_command_fails(tmp_path):
+    pdir = make_plugin(tmp_path, "muse-tech", skills=["muse-tech"])
+    bad = json.loads(json.dumps(VALID_HOOKS))
+    del bad["hooks"]["Stop"][0]["hooks"][0]["command"]
+    write_hooks(pdir, bad)
+    write_marketplace(tmp_path, ["muse-tech"])
+    result = run_in(tmp_path)
+    assert result.returncode == 1
+    assert "'command' が無い" in result.stderr
+
+
+def test_real_repo_hooks_json_is_valid():
+    hooks_path = REPO_ROOT / "plugins" / "workflow" / "dike-gate" / "hooks" / "hooks.json"
+    assert hooks_path.is_file()
+    result = subprocess.run([sys.executable, str(SCRIPT)], text=True, capture_output=True)
+    assert result.returncode == 0, result.stderr

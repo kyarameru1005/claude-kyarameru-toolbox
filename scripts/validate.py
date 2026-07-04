@@ -37,6 +37,8 @@ ABSOLUTE_PATH_PATTERNS = (
     re.compile(r"[A-Za-z]:\\+Users", re.IGNORECASE),
 )
 ALLOWED_MODELS = {"opus", "sonnet", "haiku", "inherit"}
+ALLOWED_HOOK_GROUP_KEYS = {"matcher", "hooks"}
+ALLOWED_HOOK_ENTRY_KEYS = {"type", "command", "timeout"}
 ALLOWED_TOOLS = {
     "Task",
     "Bash",
@@ -150,6 +152,59 @@ def validate_skills(skills_dir: Path, rel: str, errors: list[str]) -> None:
             )
 
 
+def validate_hooks(hooks_path: Path, rel: str, errors: list[str]) -> None:
+    """hooks.json のキーを許可リストと突き合わせる。
+
+    Claude Code の hooks スキーマに無いキー（例: 過去に実在した無効な "if"）は
+    黙って無視され、フックが意図通り発火しない事故につながる。存在しないキーを
+    検知して機械的に防ぐ。
+    """
+    if not hooks_path.is_file():
+        return
+    where = f"{rel}/hooks/hooks.json"
+    data = load_json(hooks_path, where, errors)
+    if data is None:
+        return
+    hooks = data.get("hooks")
+    if not isinstance(hooks, dict):
+        errors.append(f"{where}: 'hooks' がオブジェクトでない")
+        return
+    for event, groups in hooks.items():
+        if not isinstance(groups, list):
+            errors.append(f"{where}: hooks.{event} がリストでない")
+            continue
+        for gi, group in enumerate(groups):
+            gloc = f"{where}: hooks.{event}[{gi}]"
+            if not isinstance(group, dict):
+                errors.append(f"{gloc}: オブジェクトでない")
+                continue
+            for key in group:
+                if key not in ALLOWED_HOOK_GROUP_KEYS:
+                    errors.append(
+                        f"{gloc}: 不明なキー '{key}'"
+                        "（Claude Code hooks スキーマに存在せず無視される）"
+                    )
+            entries = group.get("hooks")
+            if not isinstance(entries, list):
+                errors.append(f"{gloc}: 'hooks' がリストでない")
+                continue
+            for ei, entry in enumerate(entries):
+                eloc = f"{gloc}.hooks[{ei}]"
+                if not isinstance(entry, dict):
+                    errors.append(f"{eloc}: オブジェクトでない")
+                    continue
+                for key in entry:
+                    if key not in ALLOWED_HOOK_ENTRY_KEYS:
+                        errors.append(
+                            f"{eloc}: 不明なキー '{key}'"
+                            "（Claude Code hooks スキーマに存在せず無視される）"
+                        )
+                if entry.get("type") != "command":
+                    errors.append(f"{eloc}: type は 'command' のみサポート")
+                if not entry.get("command"):
+                    errors.append(f"{eloc}: 'command' が無い")
+
+
 def validate_plugin(
     pdir: Path, all_names: set[str], errors: list[str], versions: dict[str, str]
 ) -> str | None:
@@ -187,6 +242,7 @@ def validate_plugin(
 
     validate_agents(pdir / "agents", rel, errors)
     validate_skills(pdir / "skills", rel, errors)
+    validate_hooks(pdir / "hooks" / "hooks.json", rel, errors)
     return name or None
 
 
