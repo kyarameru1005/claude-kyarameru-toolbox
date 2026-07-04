@@ -59,7 +59,7 @@ jobs:
             shasum -a 256 "$file" | awk '{print $1}' > "${file}.sha256"
           fi
       - name: Upload to release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             ${{ env.ASSET }}
