@@ -240,9 +240,7 @@ def validate_tracked_files(errors: list[str]) -> None:
     for rel in sorted(p for p in out.stdout.decode("utf-8", "replace").split("\0") if p):
         path = REPO_ROOT / rel
         name = path.name
-        if name == ".env" or (
-            name.startswith(".env.") and not name.endswith(ENV_EXAMPLE_SUFFIXES)
-        ):
+        if name == ".env" or (name.startswith(".env.") and not name.endswith(ENV_EXAMPLE_SUFFIXES)):
             errors.append(f"{rel}: .env が追跡されている（秘密情報はコミットしない）")
             continue
         if not path.is_file() or path.stat().st_size > MAX_SCAN_BYTES:
@@ -264,8 +262,7 @@ def validate_tracked_files(errors: list[str]) -> None:
                 if pattern.search(line):
                     # 値そのものはログに残さない（漏えい面を広げないため）。
                     errors.append(
-                        f"{rel}:{lineno}: {label}らしき文字列"
-                        "（値は環境変数や secret 参照で渡す）"
+                        f"{rel}:{lineno}: {label}らしき文字列（値は環境変数や secret 参照で渡す）"
                     )
                     break
 
