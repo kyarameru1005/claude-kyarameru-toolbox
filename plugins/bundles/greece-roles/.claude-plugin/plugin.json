@@ -1,6 +1,6 @@
 {
   "name": "greece-roles",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Zeus と役割別サブエージェント、調査・設計・実装・レビュー・検証・文書化の作業スキル一式をまとめて導入するパック。",
   "author": {
     "name": "kyarameru"

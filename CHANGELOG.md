@@ -3,6 +3,17 @@
 このリポジトリの公開バージョン（全 plugin と `marketplace.json` の `metadata.version` を
 一括運用、[kairos-release](.claude/skills/kairos-release/SKILL.md) 参照）ごとの変更点。
 
+## v0.6.0 (2026-07-07)
+
+- 追加: `workflow/argo-git-flow` に「CI 自己修正ループ」。PR 作成・push 後に
+  `gh pr checks --watch` で CI を監視し、失敗ログの取得 → ローカル再現 → 修正 →
+  再 push を最大 5 回まで繰り返す。CI を通すためのテスト弱体化・CI 無効化の禁止、
+  force push 禁止、flaky 時の扱いを安全ルールとして明文化。
+- 追加: `scripts/validate.py` に追跡ファイル全体の検査（配布物には含まれない
+  リポジトリ側の品質ゲート強化）。マシン固有の絶対パス、秘密情報らしき文字列
+  （検出時も値はログに出さない）、追跡された `.env` を検証エラーにする。
+  CLAUDE.md の「配布前に grep で確認」を機械化したもの。
+
 ## v0.5.0 (2026-07-04)
 
 - 追加: `roles/panacea-debug`（agent: asclepius）。再現手順の固定→一変数ずつの切り分け→
