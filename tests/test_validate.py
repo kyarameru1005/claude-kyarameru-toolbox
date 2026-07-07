@@ -141,7 +141,8 @@ def test_absolute_path_in_manifest_fails(tmp_path):
     base(tmp_path)
     manifest = tmp_path / "plugins" / "muse-tech" / ".claude-plugin" / "plugin.json"
     data = json.loads(manifest.read_text())
-    data["description"] = "see /Users/me/secret"
+    # 連結で組み立てる（リテラルだとこのテストファイル自身が追跡ファイル走査に検出される）
+    data["description"] = "see " + "/Users/" + "me/secret"
     manifest.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
     result = run_in(tmp_path)
     assert result.returncode == 1
@@ -236,6 +237,73 @@ def test_agent_missing_required_key_fails(tmp_path):
     result = run_in(tmp_path)
     assert result.returncode == 1
     assert "必須キー 'model' が無い" in result.stderr
+
+
+# --- 追跡ファイル走査（絶対パス・秘密情報・.env） ---------------------------
+# 検出対象の文字列は連結で組み立てる（リテラルだとこのテストファイル自身が
+# 実リポジトリの走査に検出されるため）。
+
+
+def git_track(tmp_path: Path) -> None:
+    """tmp_path を git リポジトリ化し全ファイルをステージする（ls-files 対象化）。"""
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True, capture_output=True)
+    subprocess.run(["git", "add", "-A"], cwd=tmp_path, check=True, capture_output=True)
+
+
+def test_untracked_repo_skips_file_scan(tmp_path):
+    # git リポジトリでなければ走査は no-op（既存の検証だけで通る）
+    base(tmp_path)
+    write(tmp_path / "docs" / "note.md", "log: " + "/Users/" + "tester/tool\n")
+    result = run_in(tmp_path)
+    assert result.returncode == 0, result.stderr
+
+
+def test_tracked_machine_path_fails(tmp_path):
+    base(tmp_path)
+    write(tmp_path / "docs" / "note.md", "log: " + "/Users/" + "tester/tool\n")
+    git_track(tmp_path)
+    result = run_in(tmp_path)
+    assert result.returncode == 1
+    assert "docs/note.md:1" in result.stderr
+    assert "絶対パス" in result.stderr
+
+
+def test_path_example_placeholder_ok(tmp_path):
+    # ドキュメントの例示（/Users/... の形）はユーザー名が無いため許容される
+    base(tmp_path)
+    write(tmp_path / "docs" / "note.md", "絶対パス（" + "/Users/" + "... など）を書かない\n")
+    git_track(tmp_path)
+    result = run_in(tmp_path)
+    assert result.returncode == 0, result.stderr
+
+
+def test_tracked_secret_fails_without_echoing_value(tmp_path):
+    base(tmp_path)
+    fake_key = "sk-ant-" + "a" * 24
+    write(tmp_path / "docs" / "note.md", f"key = {fake_key}\n")
+    git_track(tmp_path)
+    result = run_in(tmp_path)
+    assert result.returncode == 1
+    assert "docs/note.md:1" in result.stderr
+    assert "Anthropic API キー" in result.stderr
+    assert fake_key not in result.stderr  # 値そのものをログに出さない
+
+
+def test_tracked_env_file_fails(tmp_path):
+    base(tmp_path)
+    write(tmp_path / ".env", "TOKEN=x\n")
+    git_track(tmp_path)
+    result = run_in(tmp_path)
+    assert result.returncode == 1
+    assert ".env が追跡されている" in result.stderr
+
+
+def test_env_example_ok(tmp_path):
+    base(tmp_path)
+    write(tmp_path / ".env.example", "TOKEN=\n")
+    git_track(tmp_path)
+    result = run_in(tmp_path)
+    assert result.returncode == 0, result.stderr
 
 
 def test_agent_invalid_model_fails(tmp_path):

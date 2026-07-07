@@ -11,6 +11,8 @@ Checks performed:
   plugin that exists, and no absolute paths leak in. ``skills/*/SKILL.md`` and
   ``agents/*.md`` frontmatter are checked for required keys and consistency.
 * marketplace listing and ``plugins/`` directory are kept in sync (no orphans).
+* every git-tracked file: machine-specific absolute paths, secret-like strings
+  (API keys, tokens, private keys), and tracked ``.env`` files are rejected.
 
 Usage::
 
@@ -21,6 +23,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -31,11 +34,25 @@ PLUGINS_DIR = REPO_ROOT / "plugins"
 AGENT_REQUIRED_KEYS = ("name", "description", "tools", "model")
 SKILL_REQUIRED_KEYS = ("description",)
 KEBAB_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+# ユーザー名相当の 1 文字以上を要求する（ドットは含めない）。これにより
+# ドキュメント中の例示（`/Users/...` `/home/...`）は許容しつつ実パスを検出する。
 ABSOLUTE_PATH_PATTERNS = (
-    re.compile(r"/Users/"),
-    re.compile(r"/home/[A-Za-z0-9._-]+"),
+    re.compile(r"/Users/[A-Za-z0-9_-]+"),
+    re.compile(r"/home/[A-Za-z0-9_-]+"),
     re.compile(r"[A-Za-z]:\\+Users", re.IGNORECASE),
 )
+# 高精度なものだけ載せる（汎用語 "token" 等は誤検知が多いため対象外）。
+SECRET_PATTERNS = (
+    (re.compile(r"sk-ant-[A-Za-z0-9_-]{10,}"), "Anthropic API キー"),
+    (re.compile(r"\bsk-[A-Za-z0-9]{20,}"), "API キー (sk-...)"),
+    (re.compile(r"\bAKIA[0-9A-Z]{16}\b"), "AWS アクセスキー"),
+    (re.compile(r"\bghp_[A-Za-z0-9]{36}\b"), "GitHub トークン"),
+    (re.compile(r"\bgithub_pat_[A-Za-z0-9_]{22,}"), "GitHub トークン"),
+    (re.compile(r"\bxox[baprs]-[A-Za-z0-9-]{10,}"), "Slack トークン"),
+    (re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"), "秘密鍵"),
+)
+ENV_EXAMPLE_SUFFIXES = (".example", ".sample", ".template")
+MAX_SCAN_BYTES = 1_000_000
 ALLOWED_MODELS = {"opus", "sonnet", "haiku", "inherit"}
 ALLOWED_HOOK_GROUP_KEYS = {"matcher", "hooks"}
 ALLOWED_HOOK_ENTRY_KEYS = {"type", "command", "timeout"}
@@ -205,6 +222,51 @@ def validate_hooks(hooks_path: Path, rel: str, errors: list[str]) -> None:
                     errors.append(f"{eloc}: 'command' が無い")
 
 
+def validate_tracked_files(errors: list[str]) -> None:
+    """git 追跡ファイル全体を走査し、配布してはいけない内容の混入を検出する。
+
+    CLAUDE.md の「配布前に grep で確認する」を機械化したもの。対象は
+    マシン固有の絶対パス・秘密情報らしき文字列・追跡された .env。
+    git が無い環境（追跡情報が得られない場合）は対象外として何もしない。
+    """
+    try:
+        out = subprocess.run(
+            ["git", "-C", str(REPO_ROOT), "ls-files", "-z"],
+            capture_output=True,
+            check=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return
+    for rel in sorted(p for p in out.stdout.decode("utf-8", "replace").split("\0") if p):
+        path = REPO_ROOT / rel
+        name = path.name
+        if name == ".env" or (name.startswith(".env.") and not name.endswith(ENV_EXAMPLE_SUFFIXES)):
+            errors.append(f"{rel}: .env が追跡されている（秘密情報はコミットしない）")
+            continue
+        if not path.is_file() or path.stat().st_size > MAX_SCAN_BYTES:
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, OSError):
+            continue  # バイナリ等は対象外
+        for lineno, line in enumerate(text.splitlines(), 1):
+            for pattern in ABSOLUTE_PATH_PATTERNS:
+                match = pattern.search(line)
+                if match:
+                    errors.append(
+                        f"{rel}:{lineno}: 絶対パス/マシン固有パスらしき記述 "
+                        f"'{match.group(0)}'（'~' や '$HOME' を使う）"
+                    )
+                    break
+            for pattern, label in SECRET_PATTERNS:
+                if pattern.search(line):
+                    # 値そのものはログに残さない（漏えい面を広げないため）。
+                    errors.append(
+                        f"{rel}:{lineno}: {label}らしき文字列（値は環境変数や secret 参照で渡す）"
+                    )
+                    break
+
+
 def validate_plugin(
     pdir: Path, all_names: set[str], errors: list[str], versions: dict[str, str]
 ) -> str | None:
@@ -355,6 +417,7 @@ def main() -> int:
     for pdir in plugin_dirs:
         validate_plugin(pdir, plugin_names, errors, versions)
     validate_marketplace(plugin_names, versions, errors)
+    validate_tracked_files(errors)
 
     if errors:
         print("検証エラー:", file=sys.stderr)
