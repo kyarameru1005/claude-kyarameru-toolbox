@@ -1,6 +1,6 @@
 {
   "name": "hestia-bootstrap",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "新しいリポジトリで Claude Code のハーネス一式を使い始めるとき、権限・品質ゲート・メモリ・Git 運用の初期セットアップを正しい順序で導入するために使う。設定の実体は持たず既存スキルへ委譲する。",
   "author": {
     "name": "kyarameru"

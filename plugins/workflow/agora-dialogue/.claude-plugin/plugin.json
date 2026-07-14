@@ -1,6 +1,6 @@
 {
   "name": "agora-dialogue",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Claude と他の AI（Codex など）がファイルを介して会話するためのファイルを作成・編集・読み取りするときに使う。ダブルチェックのレビュー依頼や相談を、構造化した受け渡しファイルでやり取りするのに向いている。",
   "author": {
     "name": "kyarameru"

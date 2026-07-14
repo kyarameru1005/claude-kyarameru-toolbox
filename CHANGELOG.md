@@ -3,6 +3,15 @@
 このリポジトリの公開バージョン（全 plugin と `marketplace.json` の `metadata.version` を
 一括運用、[kairos-release](.claude/skills/kairos-release/SKILL.md) 参照）ごとの変更点。
 
+## v0.6.1 (2026-07-14)
+
+- 修正: `olympus-orchestrate: スキル発火時はオーケストレーションを確定で実行する`
+  （zeus/daedalus/ares/asclepius を fable、aphrodite を sonnet、chronos を haiku へ
+  変更したモデル階層コスト最適化）が `v0.6.0` と同じバージョン番号のまま `main` へ
+  マージされ、`plugin marketplace update` を実行してもキャッシュが更新されない
+  不具合を修正。バージョンを上げていない変更は配布されないため、以後 `main` への
+  マージごとに必ず version を上げる。
+
 ## v0.6.0 (2026-07-07)
 
 - 追加: `workflow/argo-git-flow` に「CI 自己修正ループ」。PR 作成・push 後に
