@@ -1,6 +1,6 @@
 {
   "name": "labyrinth-explore",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "コードベース、依存の流れ、影響範囲が不明で、設計や実装の前に構造的な調査が必要なときに使う。関連ファイル、入口、変更境界を見つける作業に向いている。",
   "author": {
     "name": "kyarameru"
