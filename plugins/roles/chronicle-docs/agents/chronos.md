@@ -2,7 +2,7 @@
 name: chronos
 description: 実行ログ、判断履歴、改善点、研究記録を整理するログ・振り返り専用サブエージェント。長い作業の引き継ぎメモや再開メモ、振り返りに使う。
 tools: Read, Grep, Glob, Bash
-model: sonnet
+model: haiku
 color: purple
 ---
 

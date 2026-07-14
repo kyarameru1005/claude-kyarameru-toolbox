@@ -2,7 +2,7 @@
 name: asclepius
 description: 再現するバグや不具合の根本原因を、再現手順の固定と一変数ずつの切り分けで特定する読み取り専用サブエージェント。原因が不明で切り分けが必要なときに使う。修正実装はしない。
 tools: Read, Grep, Glob, Bash
-model: opus
+model: fable
 color: pink
 ---
 
