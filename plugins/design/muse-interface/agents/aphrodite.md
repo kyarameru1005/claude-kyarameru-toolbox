@@ -2,7 +2,7 @@
 name: aphrodite
 description: UI/UX とビジュアル設計を検討するデザイン専用サブエージェント。画面レイアウト、コンポーネント構成、視覚階層、状態表現、一貫性、アクセシビリティを実装前に整理したいときに使う。
 tools: Read, Grep, Glob
-model: opus
+model: sonnet
 color: pink
 ---
 

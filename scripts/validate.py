@@ -53,7 +53,7 @@ SECRET_PATTERNS = (
 )
 ENV_EXAMPLE_SUFFIXES = (".example", ".sample", ".template")
 MAX_SCAN_BYTES = 1_000_000
-ALLOWED_MODELS = {"opus", "sonnet", "haiku", "inherit"}
+ALLOWED_MODELS = {"opus", "sonnet", "haiku", "fable", "inherit"}
 ALLOWED_HOOK_GROUP_KEYS = {"matcher", "hooks"}
 ALLOWED_HOOK_ENTRY_KEYS = {"type", "command", "timeout"}
 ALLOWED_TOOLS = {
