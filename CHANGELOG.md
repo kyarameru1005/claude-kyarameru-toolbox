@@ -3,6 +3,24 @@
 このリポジトリの公開バージョン（全 plugin と `marketplace.json` の `metadata.version` を
 一括運用、[kairos-release](.claude/skills/kairos-release/SKILL.md) 参照）ごとの変更点。
 
+## v0.7.0 (2026-07-21)
+
+- 追加: `roles/demeter-mentor`（agent: demeter）。AI 依存による利用者のスキル低下を防ぐ
+  教育専用の役割。完成物の「なぜ」を教え、要所では先に考えさせてから答え合わせをする。
+  利用者が明示指名したときのみ働き、zeus 等の自動委譲対象にはしない。
+- 追加: `roles/poseidon-integrate`（agent: poseidon）。外部 API・webhook・MCP との接続方式・
+  認証・障害切り分けの方針を実装前に決める外部連携専用の役割。読み取り専用（Bash なし）で、
+  外部への送信・登録（MCP 登録・設定変更を含む）は行わず方針提示にとどめる。
+- 追加: `design/dionysus-motion`（agent: dionysus）。トランジション・マイクロインタラクション・
+  イージング/タイミングを設計するモーション専用の役割。aphrodite（静的設計）の補完で、
+  reduced-motion 配慮を必須とし、hephaestus へ渡せる仕様の形で出力する。
+- 変更: `olympus-orchestrate` の zeus に裁定モードを追加（専門エージェントの失敗・出力矛盾・
+  領域不明の問題を診断・裁定・次の一手の形式で解決）。委譲の実行は呼び出し元の責務であることを
+  SKILL.md に明記し、zeus 出力から原理的に埋められなかった「委譲記録」を削除。
+  委譲テーブルに poseidon / demeter（明示指名のみ）を追加。
+- 変更: `greece-roles` バンドルに `demeter-mentor`・`poseidon-integrate` を、
+  `muse-design` バンドルに `dionysus-motion` を追加。
+
 ## v0.6.1 (2026-07-14)
 
 - 修正: `olympus-orchestrate: スキル発火時はオーケストレーションを確定で実行する`

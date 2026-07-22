@@ -1,0 +1,9 @@
+{
+  "name": "poseidon-integrate",
+  "version": "0.7.0",
+  "description": "API・他システム・webhook・MCP など外部サービスとの接続と相互運用の方針を検討する外部連携専用サブエージェント Poseidon を導入する。接続方式の選定、認証方式の整理、障害時の切り分け方針を実装前に決めたいときに使う。",
+  "author": {
+    "name": "kyarameru"
+  },
+  "license": "MIT"
+}

@@ -1,6 +1,6 @@
 {
   "name": "muse-design",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "muse-* デザイン系統スキル一式（基盤 muse-interface 含む）をまとめて導入するパック。",
   "author": {
     "name": "kyarameru"
@@ -18,6 +18,7 @@
     "muse-editorial",
     "muse-tech",
     "muse-avantgarde",
-    "muse-immersive"
+    "muse-immersive",
+    "dionysus-motion"
   ]
 }

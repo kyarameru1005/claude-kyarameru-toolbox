@@ -16,8 +16,8 @@
 
 | plugin | 依存（自動導入される plugin） |
 | --- | --- |
-| `greece-roles` | `olympus-orchestrate`, `labyrinth-explore`, `oracle-design`, `forge-implement`, `aegis-review`, `gauntlet-verify`, `chronicle-docs`, `pandora-chaos`, `atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue`, `panacea-debug` |
-| `muse-design` | `muse-interface`, `muse-modern`, `muse-minimal`, `muse-bold`, `muse-cute`, `muse-playful`, `muse-retro`, `muse-luxury`, `muse-editorial`, `muse-tech`, `muse-avantgarde`, `muse-immersive` |
+| `greece-roles` | `olympus-orchestrate`, `labyrinth-explore`, `oracle-design`, `forge-implement`, `aegis-review`, `gauntlet-verify`, `chronicle-docs`, `pandora-chaos`, `atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue`, `panacea-debug`, `demeter-mentor`, `poseidon-integrate` |
+| `muse-design` | `muse-interface`, `muse-modern`, `muse-minimal`, `muse-bold`, `muse-cute`, `muse-playful`, `muse-retro`, `muse-luxury`, `muse-editorial`, `muse-tech`, `muse-avantgarde`, `muse-immersive`, `dionysus-motion` |
 
 ## 役割系 plugin（agent ＋ 作業スキル）
 
@@ -32,9 +32,14 @@
 | `chronicle-docs` | chronicle-docs | apollo, chronos |
 | `pandora-chaos` | pandora-chaos | khaos |
 | `panacea-debug` | panacea-debug | asclepius |
+| `demeter-mentor` | —（agent のみ） | demeter |
+| `poseidon-integrate` | —（agent のみ） | poseidon |
 
 ※ `ares`（セキュリティ）と `chronos`（記録・振り返り）は専用スキルを持たない例外のため、
 概念的に近い `aegis-review` / `chronicle-docs` に同梱しています。
+
+※ `demeter`（教育・実力維持）は利用者が明示指名したときのみ働くオプトイン専用で、
+zeus 等の自動委譲対象にしない。`poseidon`（外部連携）は方針提示専用の読み取り専用 agent。
 
 ## 作業スキルのみ plugin（対応 agent なし）
 
@@ -59,6 +64,10 @@
 
 系統: `muse-modern`, `muse-minimal`, `muse-bold`, `muse-cute`, `muse-playful`,
 `muse-retro`, `muse-luxury`, `muse-editorial`, `muse-tech`, `muse-avantgarde`, `muse-immersive`。
+
+※ `dionysus-motion` は skill を持たず `dionysus`（モーション設計）エージェントのみを同梱する
+例外。aphrodite（静的な UI/UX 設計）の補完として、動きの仕様（トランジション・イージング・
+タイミング）だけを担当する。
 
 ## 補足
 

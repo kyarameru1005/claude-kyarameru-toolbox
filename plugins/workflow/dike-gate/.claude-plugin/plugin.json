@@ -1,6 +1,6 @@
 {
   "name": "dike-gate",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "コミット直前と作業終了時に品質チェック（lint/テスト/検証）を強制する品質ゲート。各リポジトリの .claude/quality-gate.sh を hooks で実行し、失敗すればコミットや終了をブロックする。スクリプトが無ければ素通り（no-op）。",
   "author": {
     "name": "kyarameru"
