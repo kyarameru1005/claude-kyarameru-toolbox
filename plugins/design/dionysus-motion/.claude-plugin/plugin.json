@@ -1,0 +1,9 @@
+{
+  "name": "dionysus-motion",
+  "version": "0.7.0",
+  "description": "UI の動き（トランジション、マイクロインタラクション、イージング、タイミング）を設計するモーション専用サブエージェント Dionysus を導入する。画面の静的な設計が決まった後、動きの振り付けを実装前に決めたいときに使う。",
+  "author": {
+    "name": "kyarameru"
+  },
+  "license": "MIT"
+}

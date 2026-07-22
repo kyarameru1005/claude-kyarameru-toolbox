@@ -53,7 +53,8 @@ jobs:
       - name: Audit Python dependencies (pip-audit)
         run: |
           set -euo pipefail
-          python -m pip install --upgrade pip
+          # ランナー同梱の setuptools が古く脆弱性検出で失敗するため、pip と併せて更新する
+          python -m pip install --upgrade pip setuptools
           python -m pip install pip-audit
           pip-audit
 

@@ -1,0 +1,9 @@
+{
+  "name": "demeter-mentor",
+  "version": "0.7.0",
+  "description": "AI 依存による利用者のスキル低下を防ぎ、理解と技量を育てる教育専用サブエージェント Demeter を導入する。完了した作業の「なぜ」を学びたいとき、自力で解けるようになりたいときに、利用者の明示指名で使う。",
+  "author": {
+    "name": "kyarameru"
+  },
+  "license": "MIT"
+}

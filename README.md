@@ -38,11 +38,12 @@ claude plugin install muse-tech@kyarameru-claude
 
 - 役割系: `olympus-orchestrate`, `labyrinth-explore`, `oracle-design`, `forge-implement`,
   `aegis-review`, `gauntlet-verify`, `chronicle-docs`, `pandora-chaos`, `panacea-debug`,
+  `demeter-mentor`, `poseidon-integrate`,
   `atlas-repository`, `cerberus-permissions`, `argo-git-flow`, `agora-dialogue`,
   `dike-gate`, `mnemosyne-memory`, `hestia-bootstrap`。
 - デザイン系: `muse-interface`（基盤）, `muse-modern`, `muse-minimal`, `muse-bold`,
   `muse-cute`, `muse-playful`, `muse-retro`, `muse-luxury`, `muse-editorial`,
-  `muse-tech`, `muse-avantgarde`, `muse-immersive`。
+  `muse-tech`, `muse-avantgarde`, `muse-immersive`, `dionysus-motion`。
 
 各 plugin の中身と依存関係は [docs/plugins.md](docs/plugins.md) を参照してください。
 
