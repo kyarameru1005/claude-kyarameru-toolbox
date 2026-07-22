@@ -5,7 +5,7 @@
   },
   "description": "Claude Code 向けの役割別エージェントとデザイン系統スキルを配布する marketplace。",
   "metadata": {
-    "version": "0.6.1"
+    "version": "0.7.0"
   },
   "plugins": [
     {
@@ -23,7 +23,7 @@
     {
       "name": "olympus-orchestrate",
       "source": "./plugins/roles/olympus-orchestrate",
-      "description": "Zeus を入口にして役割分担を明示的に発火し、調査、設計、実装、レビュー、検証、文書化のどれを使うか判断して進行計画を作るときに使う。作業開始時のオーケストレーション、サブエージェント利用方針、チェックリスト管理に向いている。",
+      "description": "Zeus を入口にして役割分担を明示的に発火し、調査、設計、実装、レビュー、検証、文書化のどれを使うか判断して進行計画を作るときに使う。作業開始時のオーケストレーション、サブエージェント利用方針、チェックリスト管理、専門エージェントの失敗・出力矛盾時の裁定に向いている。",
       "category": "roles"
     },
     {
@@ -72,6 +72,18 @@
       "name": "panacea-debug",
       "source": "./plugins/roles/panacea-debug",
       "description": "バグ・不具合・再現する異常挙動を、再現手順の固定→一変数ずつの切り分け→二分探索→根本原因特定の順で直すときに使う。当てずっぽうの修正やログの追い方に迷うときに向いている。",
+      "category": "roles"
+    },
+    {
+      "name": "demeter-mentor",
+      "source": "./plugins/roles/demeter-mentor",
+      "description": "AI 依存による利用者のスキル低下を防ぎ、理解と技量を育てる教育専用サブエージェント Demeter を導入する。完了した作業の「なぜ」を学びたいとき、自力で解けるようになりたいときに、利用者の明示指名で使う。",
+      "category": "roles"
+    },
+    {
+      "name": "poseidon-integrate",
+      "source": "./plugins/roles/poseidon-integrate",
+      "description": "API・他システム・webhook・MCP など外部サービスとの接続と相互運用の方針を検討する外部連携専用サブエージェント Poseidon を導入する。接続方式の選定、認証方式の整理、障害時の切り分け方針を実装前に決めたいときに使う。",
       "category": "roles"
     },
     {
@@ -186,6 +198,12 @@
       "name": "muse-immersive",
       "source": "./plugins/design/muse-immersive",
       "description": "UI の見た目を「大きな動き / 没入感」系統に揃えたいときに使う。スクロール連動アニメーション・カーソル追従・大胆な画面遷移など、動きそのものを主役にして方向付ける。大手企業のブランドサイトのような体験を目指すときに。",
+      "category": "design"
+    },
+    {
+      "name": "dionysus-motion",
+      "source": "./plugins/design/dionysus-motion",
+      "description": "UI の動き（トランジション、マイクロインタラクション、イージング、タイミング）を設計するモーション専用サブエージェント Dionysus を導入する。画面の静的な設計が決まった後、動きの振り付けを実装前に決めたいときに使う。",
       "category": "design"
     }
   ]
