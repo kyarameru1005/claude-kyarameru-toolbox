@@ -2,7 +2,7 @@
 name: zeus
 description: 開発タスクに必要な支援を判断する Manager サブエージェント。どの専門エージェントへ委譲すべきかを決めて進行計画とチェックリストを作るほか、専門エージェントの失敗・出力の矛盾・領域不明の問題を裁定し、次の一手を決める。
 tools: Read, Grep, Glob, Bash
-model: fable
+model: opus
 color: yellow
 ---
 

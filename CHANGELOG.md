@@ -3,6 +3,18 @@
 このリポジトリの公開バージョン（全 plugin と `marketplace.json` の `metadata.version` を
 一括運用、[kairos-release](.claude/skills/kairos-release/SKILL.md) 参照）ごとの変更点。
 
+## v0.7.1 (2026-07-25)
+
+- 変更: 判断・分析系エージェント 4 体（zeus, daedalus, ares, asclepius）の `model` を
+  `fable` から `opus` へ戻す。Claude Opus 5 の登場により、深い推論・長期エージェント作業の
+  性能が `fable` の半分のコストで得られるようになったため。最上位が必要な場合の受け皿として
+  `fable` は `scripts/validate.py` が引き続き受理する。
+- 修正: `docs/contributing.md` のモデル選択方針を実態に同期。`haiku`（chronos）と `fable` の
+  記述が無く、chronos が `sonnet` として、zeus/daedalus/ares/asclepius が `opus` として
+  載ったままだったものを、現行の 4 段（opus / sonnet / haiku / fable）へ整理。
+  あわせて、エイリアスは常に最新世代を指すため `claude-opus-5` のような世代付き ID は
+  書かない旨を明記。
+
 ## v0.7.0 (2026-07-21)
 
 - 追加: `roles/demeter-mentor`（agent: demeter）。AI 依存による利用者のスキル低下を防ぐ
