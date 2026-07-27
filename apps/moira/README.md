@@ -37,7 +37,11 @@ irm https://raw.githubusercontent.com/kyarameru1005/claude-kyarameru-toolbox/mai
 
 インストール後は任意のリポジトリで `moira` が使える（`.ai/moira.json` を cwd から上方探索するため）。
 
-対応プラットフォーム: macOS (Apple Silicon / Intel) ・ Linux x86_64 ・ Windows x86_64。
+対応プラットフォーム: macOS (Apple Silicon) ・ Linux x86_64 ・ Windows x86_64。
+
+Intel Mac 向けのバイナリは配布していない（GitHub Actions の Intel macOS ランナーが
+割り当てられないため）。Intel Mac で使う場合は `cargo build --release` でソースから
+ビルドする。
 
 ## アップデート
 
@@ -130,7 +134,7 @@ moira show --json                # 機械可読（エージェント連携用）
 ## リリース手順（メンテナ向け）
 
 バージョンタグを push すると、`.github/workflows/release.yml` が各プラットフォーム
-（macOS arm64 / Intel・Linux x86_64・Windows x86_64）のバイナリをビルドし、
+（macOS arm64・Linux x86_64・Windows x86_64）のバイナリをビルドし、
 GitHub Releases にアップロードする。
 
 ```bash
