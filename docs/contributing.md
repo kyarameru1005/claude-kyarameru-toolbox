@@ -43,6 +43,11 @@
   新規追加時の `version` は、テンプレートの `0.1.0` ではなく現行の統一 version に合わせる。
 - エージェントの `model` は役割の性質で選ぶ（`inherit` にはしない。呼び出し元のモデルに依存すると
   役割ごとの意図が失われるため）。
-  - `opus`: 判断・分析が主な役割（zeus, athena, ares, daedalus, khaos, asclepius など）。
-  - `sonnet`: 調査・実装・文書化など実行寄りの役割（hermes, hephaestus, apollo, chronos, themis など）。
+  - `opus`: 判断・分析が主な役割（zeus, daedalus, ares, athena, asclepius, khaos）。
+  - `sonnet`: 調査・実装・文書化・設計提案など実行寄りの役割
+    （hermes, hephaestus, apollo, themis, aphrodite, dionysus, poseidon, demeter）。
+  - `haiku`: 定型の整理・記録が主で判断を伴わない役割（chronos）。
+  - `fable`: 現状どの agent でも使わない。最上位が要る場合の受け皿として `scripts/validate.py` は
+    受理するが、判断・分析は `opus` で足りる想定（コストは `fable` の半分）。
   新しい agent を追加するときは、既存の近い役割（判断寄りか実行寄りか）に合わせて選ぶ。
+  エイリアス（`opus` など）は常に最新世代を指すため、`claude-opus-5` のような世代付き ID は書かない。
