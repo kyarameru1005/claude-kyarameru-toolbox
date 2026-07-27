@@ -17,10 +17,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Intel Mac（x86_64-apple-darwin）は対象外。GitHub の macos-13 ランナーは
+          # 割り当てが得られず、キュー滞留のまま 24 時間で自動キャンセルされるため。
           - os: macos-14
             target: aarch64-apple-darwin
-          - os: macos-13
-            target: x86_64-apple-darwin
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
           - os: windows-latest
