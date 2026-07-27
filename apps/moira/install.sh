@@ -25,7 +25,9 @@ case "$os" in
     Darwin)
         case "$arch" in
             arm64 | aarch64) target="aarch64-apple-darwin" ;;
-            x86_64) target="x86_64-apple-darwin" ;;
+            # Intel Mac は配布対象外。バイナリが無いため、ダウンロード失敗より先に
+            # 理由を示して止める。
+            x86_64) err "Intel Mac は対象外です（Apple Silicon のみ配布）。ソースからのビルドは apps/moira/README.md を参照してください" ;;
             *) err "未対応の arch: $arch" ;;
         esac
         ;;
